@@ -1,4 +1,4 @@
-import SideBar from "./Components/SideBar.tsx"
+import SideBar from "./Components/SideBarComponents/SideBar.tsx"
 
 function App() {
   return (<>
