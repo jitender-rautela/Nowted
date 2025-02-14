@@ -14,7 +14,7 @@ function Folders() {
           (async () => {
             try {
               console.log("Fetching...");
-              await fetchFolders("/api/folders", "GET");
+              await fetchFolders("/folders", "GET");
               console.log("done");
             } catch (error) {
               console.log(error);
@@ -38,7 +38,7 @@ function Folders() {
         {fetchFolderLoading && <p className="text-white">Loading....</p>}
         {fetchFolderError && <p className="text-red">Error Loading data</p>}
         {fetchFolderData?.folders?.map((folder:any)=>{
-            return <div className="file-item" key={folder.id}>
+            return<div className="file-item" key={folder.id}>
             <img
               src="../src/assets/folder-close.svg"
               alt="file img"

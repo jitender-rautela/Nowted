@@ -14,7 +14,7 @@ function Recents() {
     (async () => {
       try {
         console.log("Fetching...");
-        await fetchRecentNotes("/api/notes/recent", "GET");
+        await fetchRecentNotes("/notes/recent", "GET");
         console.log("done");
       } catch (error) {
         console.log(error);

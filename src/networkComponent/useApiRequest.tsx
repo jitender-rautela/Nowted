@@ -19,11 +19,15 @@ function useApiRequest<T=any>(){
 
     })
 
+    const AxiosApi = axios.create({
+        baseURL:'https://nowted-server.remotestate.com'
+    })
+
     const callApi = async(url:string, method:"GET"|"POST"|"PATCH"|"PUT"|"DELETE", data?: any)=>{
         setApiState((a)=>({...a, loading:true, error:undefined}));
 
         try{
-            const response = await axios({method, url, data});
+            const response = await AxiosApi({method, url, data});
             setApiState({data:response.data, loading:false,error:undefined});
         }catch(error){
             const axiosError = error as AxiosError<{ error?: string; message?: string }>;
