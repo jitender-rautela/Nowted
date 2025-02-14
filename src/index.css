@@ -9,3 +9,23 @@
 .file-text {
   @apply font-[Source_Sans_Pro] font-semibold text-[16px] leading-[20.11px] tracking-normal text-white/60;
 }
+
+.sidebar-heading{
+    @apply font-[Source_Sans_Pro] font-semibold text-white/60 text-[14px] leading-[17.6px] tracking-normal
+}
+
+.sidebar-subcontainer{
+    @apply flex flex-col gap-2 w-[300px]
+}
+
+@layer utilities {
+    .hide-scrollbar {
+      scrollbar-width: none; 
+      -ms-overflow-style: none; 
+    }
+  
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none; 
+    }
+  }
+  

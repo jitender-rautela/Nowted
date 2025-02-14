@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Recents from "./Recents.tsx";
+import Folders from "./Folders.tsx";
 
 function SideBar() {
   const [search, setSearch] = useState(true);
@@ -50,6 +51,7 @@ function SideBar() {
         )}
 
         <Recents />
+        <Folders/>
       </div>
     </>
   );
