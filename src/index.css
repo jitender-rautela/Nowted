@@ -2,20 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+
+/* Side bar Component--- */
+
+.sidebar-heading{
+  @apply font-[Source_Sans_Pro] font-semibold text-white/60 text-[14px] leading-[17.6px] tracking-normal
+}
+
+.sidebar-subcontainer{
+  @apply flex flex-col gap-2 w-[300px]
+}
+
 .file-item {
   @apply flex gap-[15px] cursor-pointer items-center w-full h-[40px] pt-2 pb-2;
 }
 
 .file-text {
   @apply font-[Source_Sans_Pro] font-semibold text-[16px] leading-[20.11px] tracking-normal text-white/60;
-}
-
-.sidebar-heading{
-    @apply font-[Source_Sans_Pro] font-semibold text-white/60 text-[14px] leading-[17.6px] tracking-normal
-}
-
-.sidebar-subcontainer{
-    @apply flex flex-col gap-2 w-[300px]
 }
 
 @layer utilities {
@@ -28,4 +31,25 @@
       display: none; 
     }
   }
+
+  /* Note Component ---- */
+
+  /* Empty & Restore */
+  .note-view-container{
+    @apply w-full h-[1024px] flex flex-col justify-center items-center  gap-[10px]
+  }
+
+  .note-view-h{
+    @apply text-white font-[Source_Sans_Pro] font-semibold text-[28px] leading-[35.2px] tracking-normal
+  }
+
+  .note-view-p{
+    @apply text-white text-center w-[460px] font-[Source_Sans_Pro] font-normal text-white/60 text-[16px] leading-[26px] tracking-normal
+  }
+  
+  .note-view-btn{
+    @apply text-white font-[Source_Sans_Pro] font-normal text-[16px] leading-[26px] tracking-normal bg-[#312EB5] pr-[30px] pl-[30px] pt-[8px] pb-[8px] rounded-md cursor-pointer
+  }
+
+  /*Active*/
   
