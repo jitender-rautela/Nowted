@@ -28,32 +28,32 @@ function SideBar() {
         </div>
 
         {search ? (
-          <div className="new-note-field flex justify-center items-center w-full h-[40px] pl-[20px] gap-[8px] rounded-[3px] bg-white/5 pr-[20px]">
-            <img
-              src="../src/assets/new.svg"
-              alt="Add file img"
-              className="w-[20px] h-[20px]"
-            />
-            <span className="text-white font-[Source Sans Pro] font-semibold text-base leading-[20.11px] tracking-normal">
-              New Note
-            </span>
-          </div>
+          <div
+          className="new-note-field flex justify-center items-center w-full h-[40px] pl-5 pr-5 gap-2 rounded bg-white/5 cursor-pointer hover:bg-white/10 transition"
+          onClick={() => console.log("Create a new note!")} 
+        >
+          <img src="../src/assets/new.svg" alt="New Note" className="w-5 h-5" />
+          <span className="text-white font-semibold text-base">New Note</span>
+        </div>
+        
         ) : (
-          <div className="search-field flex items-center w-full h-[40px] gap-[8px] rounded-[3px] bg-white/5 pl-[10px]">
+          <div className="search-field flex items-center w-full h-[40px] gap-2 rounded bg-white/5 pl-3">
             <img
               src="../src/assets/search.svg"
-              alt="Add file img"
-              className="w-[20px] h-[20px]"
+              alt="Search icon"
+              className="w-5 h-5"
             />
-            <span className="text-white font-[Source Sans Pro] font-semibold text-base leading-[20.11px] tracking-normal">
-              Search Note
-            </span>
+            <input
+              type="text"
+              placeholder="Search Note"
+              className="bg-transparent text-white font-semibold text-base outline-none placeholder-white w-full"
+            />
           </div>
         )}
 
         <Recents />
-        <Folders/>
-        <More/>
+        <Folders />
+        <More />
       </div>
     </>
   );

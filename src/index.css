@@ -14,11 +14,11 @@
 }
 
 .file-item {
-  @apply flex gap-[15px] cursor-pointer items-center w-full h-[40px] pt-2 pb-2;
+  @apply flex gap-[15px] cursor-pointer items-center w-full h-[40px] pt-2 pb-2 hover:bg-[#312EB5] hover:text-white transition-all duration-200;
 }
 
 .file-text {
-  @apply font-[Source_Sans_Pro] font-semibold text-[16px] leading-[20.11px] tracking-normal text-white/60;
+  @apply font-[Source_Sans_Pro] font-semibold text-[16px] leading-[20.11px] tracking-normal text-white/60 ;
 }
 
 @layer utilities {

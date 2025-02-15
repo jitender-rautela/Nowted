@@ -23,7 +23,7 @@ function ActiveNote() {
     document.addEventListener("click", handleClickOutside);
 
     return () => document.removeEventListener("click", handleClickOutside);
-  });
+  },[]);
 
   return (
     <div className="flex flex-col gap-[30px] p-[50px] w-full h-[1024px]">

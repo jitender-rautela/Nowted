@@ -34,14 +34,19 @@ function Recents() {
         {recentNotesData?.recentNotes?.map((folder: any) => (
           <div
             key={folder.id}
-            className="file-item"
+            className="file-item group"
           >
             <img
+              className="w-6 h-6 group-hover:hidden"
               src="../src/assets/file.svg"
               alt="file img"
-              className="w-6 h-6"
             />
-            <span className="file-text ">
+            <img
+              className="w-6 h-6 hidden group-hover:block"
+              src="../src/assets/file-focus.svg"
+              alt="file img"
+            />
+            <span className="file-text group-hover:text-white ">
               {folder.title}
             </span>
           </div>
