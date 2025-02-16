@@ -1,21 +1,19 @@
-import SideBar from "./Components/SideBarComponents/SideBar.tsx"
+import SideBar from "./Components/SideBarComponents/SideBar.tsx";
 import FolderList from "./Components/FolderList/FolderList.tsx";
-import EmptyNote from "./Components/NoteComponents/EmptyNote.tsx";
-import RestoreNote from "./Components/NoteComponents/RestoreNote.tsx";
 import ActiveNote from "./Components/NoteComponents/ActiveNote.tsx";
-import NoteOption from "./Components/NoteComponents/NoteOption.tsx";
+import { FolderProvider } from "./context/FolderContext.tsx";
+import { NoteProvider } from "./context/NoteContext.tsx";
 
 function App() {
-  return (<>
-  <SideBar/>
-  <FolderList/>
-  {/* <EmptyNote/> */}
-  {/* <RestoreNote/> */}
-  <ActiveNote/>
-  {/* <NoteOption/> */}
-  </>
-  )
- 
+  return (
+    <FolderProvider>
+      <NoteProvider>
+      <SideBar />
+      <FolderList />
+      <ActiveNote />
+      </NoteProvider>
+    </FolderProvider>
+  );
 }
 
 export default App;

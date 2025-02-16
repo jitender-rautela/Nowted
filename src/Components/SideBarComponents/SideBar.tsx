@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Recents from "./Recents.tsx";
 import Folders from "./Folders.tsx";
 import More from "./More.tsx";

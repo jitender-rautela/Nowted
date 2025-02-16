@@ -1,31 +1,65 @@
-function Folder() {
+import { useEffect } from "react";
+import { useFolders } from "../../context/FolderContext";
+import "../../index.css";
+import useApiRequest from "../../networkComponent/useApiRequest";
+import { useNotes } from "../../context/NoteContext";
+
+function FolderList() {
+
+  const{selectedNote, setSelectedNote} = useNotes()
+  
+  const {
+    data: fetchNoteData,
+    loading: fetchNoteLoading,
+    error: fetchNoteError,
+    callApi: fetchNote,
+  } = useApiRequest();
+
+  const{ folderList, selectedFolderName} = useFolders()
+  // console.log(selectedFolderName);
+  
+  const created = (date: Date) => date.toLocaleDateString();
+
+  const handleNoteClick = async(e:React.MouseEvent,noteId:string)=>{
+
+    try {
+      await fetchNote(`/notes/${noteId}`,"GET")
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(()=>{
+    if(fetchNoteData?.note)setSelectedNote(fetchNoteData.note)
+
+  },[fetchNoteData])
+
+
+
   return (
-    <div
-      className="w-[350px] h-[1024px] bg-[#1C1C1C] flex flex-col gap-[30px] pt-[30px] pr-[20px] pl-[20px]"
-    >
-        <span className="font-[Source Sans Pro] font-semibold text-[22px] leading-[27.65px] tracking-normal text-white">Personal</span>
+    <div className="folder-list-container">
+      <span className="folder-list-heading">{selectedFolderName}</span>
 
-        <div className="w-full h-[862px] flex flex-col gap-[20px]  ">
-            <div className="h-[98px] w-[310px] bg-white/5 rounded-[3px] gap-[10px] p-[20px] cursor-pointer">
-                <span className="font-[Source Sans Pro] font-medium text-[18px] leading-[28px] tracking-normal text-white">My Goals for the Next Year</span>
-                <div className="flex gap-[10px]">
-                    <span className="font-[Source Sans Pro] font-normal text-[16px] leading-[20.11px] tracking-normal text-white/60">31/02/2022</span>
+      <div className="folder-list-subcontainer overflow-scroll hide-scrollbar">
+        {folderList?.map((note) => {
+          return (
+            <div className="note-container" key={note.id} onClick={(event)=>handleNoteClick(event,note.id)}>
+              <span className="note-container-heading">{note.title}</span>
+              <div className="flex gap-[10px]">
+                
+              <span className="note-date">{created(new Date(note.createdAt))}</span>
 
-                <span className="font-[Source Sans Pro] font-normal text-[16px] leading-[20.11px] tracking-normal text-white/60">As the year comes to a </span>
-                </div>
+
+                <span className="note-preview">{note.preview.length > 20 ? `${note.preview.slice(0,20)}...`: note.preview}</span>
+              </div>
             </div>
-
-            <div className="h-[98px] w-[310px] bg-white/5 rounded-[3px] gap-[10px] p-[20px] cursor-pointer">
-                <span className="font-[Source Sans Pro] font-medium text-[18px] leading-[28px] tracking-normal text-white">My Goals for the Next Year</span>
-                <div>
-
-                <span className="font-[Source Sans Pro] font-normal text-[16px] leading-[20.11px] tracking-normal text-white/60">Lorem ipsum dolor sit amet.</span>
-                </div>
-            </div>
-        </div>
-
+          );
+        })}
+      </div>
     </div>
   );
 }
 
-export default Folder;
+
+
+export default FolderList;
