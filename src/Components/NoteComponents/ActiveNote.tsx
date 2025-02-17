@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import NoteOption from "./NoteOption";
 import { useNotes } from "../../context/NoteContext";
+import EmptyNote from "./EmptyNote";
 
 function ActiveNote() {
   const [showOptions, setShowOptions] = useState(false);
@@ -30,9 +31,7 @@ function ActiveNote() {
 
   if (!selectedNote) {
     return (
-      <div className="flex items-center justify-center w-full h-[1024px] text-white text-xl">
-        No note selected
-      </div>
+      <EmptyNote/>
     );
   }
 
@@ -78,7 +77,7 @@ function ActiveNote() {
       </div>
 
       <div>
-        <p className="w-[690px] h-[700px] text-white text-base leading-[28px]">
+        <p className="w-[690px] h-[700px] text-white text-base leading-[28px] overflow-scroll hide-scrollbar">
           {selectedNote.content || "No content available"}
         </p>
       </div>

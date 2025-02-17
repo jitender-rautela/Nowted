@@ -42,7 +42,7 @@
   }
 
   .folder-list-subcontainer{
-    @apply w-full h-[862px] flex flex-col gap-[20px]  
+    @apply w-[310px] h-[862px] flex flex-col gap-[20px]  
   }
 
   .note-container{

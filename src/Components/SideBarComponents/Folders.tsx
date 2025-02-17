@@ -1,12 +1,13 @@
-import { useFolders } from "../../context/FolderContext";
+import React, { useEffect, useState } from "react";
 import "../../index.css";
+import { useFolders } from "../../context/FolderContext";
 import useApiRequest from "../../networkComponent/useApiRequest";
-import React, {useEffect, useState } from "react";
 
 function Folders() {
   const [addFolder, setAddFolder] = useState(false);
   const [folderName, setFolderName] = useState("My New Folder");
-  const{setFolderList,setSelectedFolderName } = useFolders()
+  const { setFolderList, setSelectedFolderName, selectedFolderName } =
+    useFolders();
 
   const {
     data: fetchFolderData,
@@ -29,16 +30,6 @@ function Folders() {
     callApi: createFolder,
   } = useApiRequest();
 
-  useEffect(() => {
-    (async () => {
-      try {
-        await fetchFolders("/folders", "GET");
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-  }, [addFolder]);
-
   const handleAddFolder = () => {
     setAddFolder(true);
   };
@@ -60,15 +51,31 @@ function Folders() {
     setAddFolder(false);
   };
 
-  const handleFolderClick = async (e: React.MouseEvent, folderId: string, folderName:string) => {
+  const handleFolderClick = async (
+    e: React.MouseEvent,
+    folderId: string,
+    folderName: string
+  ) => {
+    if (folderName === selectedFolderName) return;
+
+    setSelectedFolderName(folderName);
     try {
-      setSelectedFolderName(folderName)
       await fetchFolderNotes(`/notes?folderId=${folderId}`, "GET");
-      console.log("Notes loaded..")      
+      console.log("Notes loaded..");
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        await fetchFolders("/folders", "GET");
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, [addFolder]);
 
   useEffect(() => {
     if (fetchFolderNotesData?.notes) {
@@ -76,7 +83,21 @@ function Folders() {
     }
   }, [fetchFolderNotesData]);
 
+  useEffect(() => {
+    if (fetchFolderData?.folders?.length > 0 && !selectedFolderName) {
+      const firstFolder = fetchFolderData.folders[0];
+      setSelectedFolderName(firstFolder.name);
+      (async () => {
+        try {
+          await fetchFolderNotes(`/notes?folderId=${firstFolder.id}`, "GET");
+        } catch (error) {
+          console.log(error);
+        }
+      })();
+    }
+  }, [fetchFolderData]);
 
+  
   return (
     <div className="sidebar-subcontainer h-[295px]  pr-[40px]">
       <div className=" flex justify-between h-[20px] ">
@@ -116,21 +137,39 @@ function Folders() {
         {fetchFolderData?.folders?.map((folder: any) => {
           return (
             <div
-              className="file-item group hover:bg-white/5"
+              className={`file-item group hover:bg-white/5 ${
+                selectedFolderName === folder.name ? "bg-white/5" : ""
+              }`}
               key={folder.id}
-              onClick={(event) => handleFolderClick(event, folder.id, folder.name)}
+              onClick={(event) =>
+                handleFolderClick(event, folder.id, folder.name)
+              }
             >
               <img
-                className="w-6 h-6 group-hover:hidden"
+                className={`w-6 h-6 ${
+                  selectedFolderName === folder.name
+                    ? "hidden"
+                    : "group-hover:hidden"
+                }`}
                 src="../src/assets/folder-close.svg"
                 alt="folder img"
               />
               <img
-                className="w-6 h-6 hidden group-hover:block"
+                className={`w-6 h-6 ${
+                  selectedFolderName === folder.name
+                    ? "block"
+                    : "hidden group-hover:block"
+                }`}
                 src="../src/assets/folder.svg"
                 alt="folder img"
               />
-              <span className="file-text group-hover:text-white">
+              <span
+                className={`file-text ${
+                  selectedFolderName === folder.name
+                    ? "text-white"
+                    : "group-hover:text-white"
+                }`}
+              >
                 {folder.name}
               </span>
             </div>
