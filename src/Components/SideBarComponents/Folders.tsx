@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import "../../index.css";
 import { useFolders } from "../../context/FolderContext";
 import useApiRequest from "../../networkComponent/useApiRequest";
+import { NavLink, useNavigate } from "react-router-dom";
 
 function Folders() {
   const [addFolder, setAddFolder] = useState(false);
   const [folderName, setFolderName] = useState("My New Folder");
   const { setFolderList, setSelectedFolderName, selectedFolderName } =
     useFolders();
+
+  // const navigate = useNavigate()
 
   const {
     data: fetchFolderData,
@@ -65,6 +68,9 @@ function Folders() {
     } catch (error) {
       console.log(error);
     }
+
+    // navigate(`/${folderName}/${folderId}`)
+    
   };
 
   useEffect(() => {
@@ -94,6 +100,9 @@ function Folders() {
           console.log(error);
         }
       })();
+
+      // navigate(`/${firstFolder.name}/${firstFolder.id}`)
+
     }
   }, [fetchFolderData]);
 
@@ -132,11 +141,15 @@ function Folders() {
             />
           </div>
         )}
-        {fetchFolderLoading && <p className="text-white">Loading....</p>}
+        {/* {fetchFolderLoading && <p className="text-white">Loading....</p>} */}
         {fetchFolderError && <p className="text-red">Error Loading data</p>}
         {fetchFolderData?.folders?.map((folder: any) => {
           return (
-            <div
+            <NavLink
+                      key={folder.id}
+                      to={`/folders/${folder.id}`}
+                    >
+                       <div
               className={`file-item group hover:bg-white/5 ${
                 selectedFolderName === folder.name ? "bg-white/5" : ""
               }`}
@@ -173,6 +186,8 @@ function Folders() {
                 {folder.name}
               </span>
             </div>
+                    </NavLink>
+           
           );
         })}
       </div>
