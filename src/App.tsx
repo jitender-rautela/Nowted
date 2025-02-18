@@ -14,7 +14,7 @@ function App() {
     //   <NoteProvider>
     //     <SideBar />
     //     <FolderList />
-    //     <EmptyNote/>
+    //     <EmptyNote/> nbzc bncx
     //     {/* <Outlet /> */}
     //   </NoteProvider>
     // </FolderProvider>
@@ -22,7 +22,7 @@ function App() {
     <Router>
       <Routes>
         <Route path='/' element={<Layout/>}/>
-        <Route path='folders/:folderId' element={<Layout/>}>
+        <Route path='folders/:folderId' element={<Layout/>}> 
         <Route path='notes/:noteId' element={<Layout/>}/>
         </Route>
 
