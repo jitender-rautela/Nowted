@@ -29,7 +29,7 @@ const Layout:React.FC =()=>{
       <NoteProvider>
         <SideBar />
         <FolderList />
-        <EmptyNote/>
+        <ActiveNote/>
         {/* <Outlet /> */}
       </NoteProvider>
     </FolderProvider>

@@ -2,15 +2,16 @@ import React, { useEffect, useState } from "react";
 import "../../index.css";
 import { useFolders } from "../../context/FolderContext";
 import useApiRequest from "../../networkComponent/useApiRequest";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 
 function Folders() {
   const [addFolder, setAddFolder] = useState(false);
   const [folderName, setFolderName] = useState("My New Folder");
   const { setFolderList, setSelectedFolderName, selectedFolderName } =
     useFolders();
+  const { folderId } = useParams();
 
-  // const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const {
     data: fetchFolderData,
@@ -70,7 +71,6 @@ function Folders() {
     }
 
     // navigate(`/${folderName}/${folderId}`)
-    
   };
 
   useEffect(() => {
@@ -81,7 +81,7 @@ function Folders() {
         console.log(error);
       }
     })();
-  }, [addFolder]);
+  }, [addFolder, folderId]);
 
   useEffect(() => {
     if (fetchFolderNotesData?.notes) {
@@ -90,23 +90,38 @@ function Folders() {
   }, [fetchFolderNotesData]);
 
   useEffect(() => {
-    if (fetchFolderData?.folders?.length > 0 && !selectedFolderName) {
+    if (folderId) {
+      const foundFolder = fetchFolderData?.folders?.find(
+        (f) => f.id === folderId
+      );
+      if (foundFolder) {
+        setSelectedFolderName(foundFolder.name);
+        (async () => {
+          try {
+            await fetchFolderNotes(`/notes?folderId=${folderId}`, "GET");
+            console.log("Notes loaded..");
+          } catch (error) {
+            console.log(error);
+          }
+        })();
+      }
+    } else if (fetchFolderData?.folders?.length > 0 && !selectedFolderName) {
       const firstFolder = fetchFolderData.folders[0];
       setSelectedFolderName(firstFolder.name);
+
       (async () => {
         try {
           await fetchFolderNotes(`/notes?folderId=${firstFolder.id}`, "GET");
+          console.log("Notes loaded..");
         } catch (error) {
           console.log(error);
         }
       })();
 
-      // navigate(`/${firstFolder.name}/${firstFolder.id}`)
-
+      navigate(`/folders/${firstFolder.id}`);
     }
   }, [fetchFolderData]);
 
-  
   return (
     <div className="sidebar-subcontainer h-[295px]  pr-[40px]">
       <div className=" flex justify-between h-[20px] ">
@@ -145,49 +160,45 @@ function Folders() {
         {fetchFolderError && <p className="text-red">Error Loading data</p>}
         {fetchFolderData?.folders?.map((folder: any) => {
           return (
-            <NavLink
-                      key={folder.id}
-                      to={`/folders/${folder.id}`}
-                    >
-                       <div
-              className={`file-item group hover:bg-white/5 ${
-                selectedFolderName === folder.name ? "bg-white/5" : ""
-              }`}
-              key={folder.id}
-              onClick={(event) =>
-                handleFolderClick(event, folder.id, folder.name)
-              }
-            >
-              <img
-                className={`w-6 h-6 ${
-                  selectedFolderName === folder.name
-                    ? "hidden"
-                    : "group-hover:hidden"
+            <NavLink key={folder.id} to={`/folders/${folder.id}`}>
+              <div
+                className={`file-item group hover:bg-white/5 ${
+                  selectedFolderName === folder.name ? "bg-white/5" : ""
                 }`}
-                src="../src/assets/folder-close.svg"
-                alt="folder img"
-              />
-              <img
-                className={`w-6 h-6 ${
-                  selectedFolderName === folder.name
-                    ? "block"
-                    : "hidden group-hover:block"
-                }`}
-                src="../src/assets/folder.svg"
-                alt="folder img"
-              />
-              <span
-                className={`file-text ${
-                  selectedFolderName === folder.name
-                    ? "text-white"
-                    : "group-hover:text-white"
-                }`}
+                key={folder.id}
+                onClick={(event) =>
+                  handleFolderClick(event, folder.id, folder.name)
+                }
               >
-                {folder.name}
-              </span>
-            </div>
-                    </NavLink>
-           
+                <img
+                  className={`w-6 h-6 ${
+                    selectedFolderName === folder.name
+                      ? "hidden"
+                      : "group-hover:hidden"
+                  }`}
+                  src="../src/assets/folder-close.svg"
+                  alt="folder img"
+                />
+                <img
+                  className={`w-6 h-6 ${
+                    selectedFolderName === folder.name
+                      ? "block"
+                      : "hidden group-hover:block"
+                  }`}
+                  src="../src/assets/folder.svg"
+                  alt="folder img"
+                />
+                <span
+                  className={`file-text ${
+                    selectedFolderName === folder.name
+                      ? "text-white"
+                      : "group-hover:text-white"
+                  }`}
+                >
+                  {folder.name}
+                </span>
+              </div>
+            </NavLink>
           );
         })}
       </div>

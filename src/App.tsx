@@ -22,10 +22,13 @@ function App() {
     <Router>
       <Routes>
         <Route path='/' element={<Layout/>}/>
-        <Route path=':folders/:folderId' element={<Layout/>}/>
+        <Route path='folders/:folderId' element={<Layout/>}>
+        <Route path='notes/:noteId' element={<Layout/>}/>
+        </Route>
+
       </Routes>
     </Router>
-  );
+  ); 
 }
 
 export default App;
