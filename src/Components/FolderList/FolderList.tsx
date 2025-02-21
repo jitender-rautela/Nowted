@@ -1,45 +1,42 @@
 import { useEffect } from "react";
 import "../../index.css";
 import { useFolders } from "../../context/FolderContext";
-import { useNotes } from "../../context/NoteContext";
 import useApiRequest from "../../networkComponent/useApiRequest";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation, useParams } from "react-router-dom";
 
-function FolderList() {
-  // const { selectedNote, setSelectedNote } = useNotes();
+function fetchNotesData() {
 
-  // const {
-  //   data: fetchNoteData,
-  //   loading: fetchNoteLoading,
-  //   error: fetchNoteError,
-  //   callApi: fetchNote,
-  // } = useApiRequest();
 
-  const { folderList, selectedFolderName } = useFolders();
+  const {
+    data: fetchNotesData,
+    loading: fetchNotesLoading,
+    error: fetchNotesError,
+    callApi: fetchNotes,
+  } = useApiRequest();
 
   const created = (date: Date) => date.toLocaleDateString();
 
-  // const handleNoteClick = async (e: React.MouseEvent, noteId: string) => {
-  //   try {
-  //     await fetchNote(`/notes/${noteId}`, "GET");
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  const {selectedFolderName } = useFolders();
+  const {folderId} = useParams();
+  const location = useLocation();
 
-  // useEffect(() => {
-  //   if (fetchNoteData?.note) setSelectedNote(fetchNoteData.note);
-  // }, [fetchNoteData]);
+  useEffect(()=>{
+    ;(async()=>{
+      await fetchNotes(`/notes?folderId=${folderId}`,"GET")
+    })()
+  },[folderId, location.key])
+
+
 
   return (
     <div className="folder-list-container">
       <span className="folder-list-heading">{selectedFolderName}</span>
 
       <div className="folder-list-subcontainer overflow-scroll hide-scrollbar">
-        {folderList?.map((note) => {
+        {fetchNotesData?.notes?.map((note) => {
           return (
             <NavLink key={note.id} to={`notes/${note.id}`}>
-              <div
+              <div 
                 className="note-container"
                 // onClick={(event) => handleNoteClick(event, note.id)}
               >
@@ -64,4 +61,4 @@ function FolderList() {
   );
 }
 
-export default FolderList;
+export default fetchNotesData;

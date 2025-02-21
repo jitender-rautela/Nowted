@@ -20,12 +20,6 @@ function Folders() {
     callApi: fetchFolders,
   } = useApiRequest();
 
-  const {
-    data: fetchFolderNotesData,
-    loading: fetchFolderNotesLoading,
-    error: fetchFolderNotesError,
-    callApi: fetchFolderNotes,
-  } = useApiRequest();
 
   const {
     data: createFolderData,
@@ -55,24 +49,9 @@ function Folders() {
     setAddFolder(false);
   };
 
-  const handleFolderClick = async (
-    e: React.MouseEvent,
-    folderId: string,
-    folderName: string
-  ) => {
-    if (folderName === selectedFolderName) return;
 
-    setSelectedFolderName(folderName);
-    try {
-      await fetchFolderNotes(`/notes?folderId=${folderId}`, "GET");
-      console.log("Notes loaded..");
-    } catch (error) {
-      console.log(error);
-    }
 
-    // navigate(`/${folderName}/${folderId}`)
-  };
-
+// Fetch All the folders on mount and whevever addFolder
   useEffect(() => {
     (async () => {
       try {
@@ -81,13 +60,8 @@ function Folders() {
         console.log(error);
       }
     })();
-  }, [addFolder, folderId]);
+  }, [addFolder]);
 
-  useEffect(() => {
-    if (fetchFolderNotesData?.notes) {
-      setFolderList(fetchFolderNotesData.notes);
-    }
-  }, [fetchFolderNotesData]);
 
   useEffect(() => {
     if (folderId) {
@@ -96,28 +70,10 @@ function Folders() {
       );
       if (foundFolder) {
         setSelectedFolderName(foundFolder.name);
-        (async () => {
-          try {
-            await fetchFolderNotes(`/notes?folderId=${folderId}`, "GET");
-            console.log("Notes loaded..");
-          } catch (error) {
-            console.log(error);
-          }
-        })();
       }
     } else if (fetchFolderData?.folders?.length > 0 && !selectedFolderName) {
       const firstFolder = fetchFolderData.folders[0];
       setSelectedFolderName(firstFolder.name);
-
-      (async () => {
-        try {
-          await fetchFolderNotes(`/notes?folderId=${firstFolder.id}`, "GET");
-          console.log("Notes loaded..");
-        } catch (error) {
-          console.log(error);
-        }
-      })();
-
       navigate(`/folders/${firstFolder.id}`);
     }
   }, [fetchFolderData]);
@@ -163,12 +119,9 @@ function Folders() {
             <NavLink key={folder.id} to={`/folders/${folder.id}`}>
               <div
                 className={`file-item group hover:bg-white/5 ${
-                  selectedFolderName === folder.name ? "bg-white/5" : ""
+                  folder.id === folderId ? "bg-white/5" : ""
                 }`}
                 key={folder.id}
-                onClick={(event) =>
-                  handleFolderClick(event, folder.id, folder.name)
-                }
               >
                 <img
                   className={`w-6 h-6 ${
