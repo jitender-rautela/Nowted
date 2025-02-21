@@ -16,7 +16,6 @@ function RestoreNote() {
     
   }
 
-
   return (
     <div className="note-view-container">
       <img src="../src/assets/document.svg" alt="document img" />
