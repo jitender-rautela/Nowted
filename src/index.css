@@ -46,7 +46,8 @@
   }
 
   .note-container{
-    @apply h-[98px] w-[310px] bg-white/5 rounded-[3px] gap-[10px] p-[20px] cursor-pointer
+    @apply h-[98px] w-[310px]
+ rounded-[3px] gap-[10px] p-[20px] cursor-pointer
   }
 
   .note-container-heading{

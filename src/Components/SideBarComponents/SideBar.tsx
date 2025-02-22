@@ -1,14 +1,42 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Recents from "./Recents.tsx";
 import Folders from "./Folders.tsx";
 import More from "./More.tsx";
+import { replace, useNavigate, useParams } from "react-router-dom";
+import useApiRequest from "../../networkComponent/useApiRequest.tsx";
 
 function SideBar() {
   const [search, setSearch] = useState(true);
+  const navigate = useNavigate();
+  const { folderId } = useParams();
+  const {
+    data: postNoteData,
+    loading: postNoteLoading,
+    error: postNoteError,
+    callApi: postNote,
+  } = useApiRequest();
 
   const handleSearch = () => {
     setSearch((s) => !s);
   };
+
+  const handleCreateNote = async () => {
+    if (!folderId) return;
+    await postNote("/notes", "POST", {
+      folderId: folderId,
+      title: "Untitled Note",
+      content: "Click to edit ...",
+      isFavorite: false,
+      isArchived: false,
+    });
+    console.log("new note created");
+  };
+
+  useEffect(() => {
+    if (postNoteData?.id) {
+      navigate(`/folders/${folderId}/notes/${postNoteData.id}`);
+    }
+  }, [postNoteData]);
 
   return (
     <>
@@ -29,13 +57,16 @@ function SideBar() {
 
         {search ? (
           <div
-          className="new-note-field flex justify-center items-center w-full h-[40px] pl-5 pr-5 gap-2 rounded bg-white/5 cursor-pointer hover:bg-white/10 transition"
-          onClick={() => console.log("Create a new note!")} 
-        >
-          <img src="../src/assets/new.svg" alt="New Note" className="w-5 h-5" />
-          <span className="text-white font-semibold text-base">New Note</span>
-        </div>
-        
+            className="new-note-field flex justify-center items-center w-full h-[40px] pl-5 pr-5 gap-2 rounded bg-white/5 cursor-pointer hover:bg-white/10 transition"
+            onClick={handleCreateNote}
+          >
+            <img
+              src="../src/assets/new.svg"
+              alt="New Note"
+              className="w-5 h-5"
+            />
+            <span className="text-white font-semibold text-base">New Note</span>
+          </div>
         ) : (
           <div className="search-field flex items-center w-full h-[40px] gap-2 rounded bg-white/5 pl-3">
             <img

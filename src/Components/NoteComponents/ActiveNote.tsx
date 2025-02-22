@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import EmptyNote from "./EmptyNote";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useMatch, useNavigate, useParams } from "react-router-dom";
 import useApiRequest from "../../networkComponent/useApiRequest";
 import RestoreNote from "./RestoreNote";
 
@@ -13,12 +13,13 @@ interface PatchData {
 }
 
 function ActiveNote() {
+  const { noteId, folderId } = useParams();
   const navigate = useNavigate();
   const [noteHeader, setNoteHeader] = useState<string>("");
   const [noteContent, setNoteContent] = useState<string>("");
   // const [isDeleted, setIsDeleted] = useState<boolean>(false);
-  const location = useLocation();
-  const isDeleted = location.pathname.includes("/deleted");
+  const isDeleted = useMatch(`/folders/:${folderId}/notes/:${noteId}/deleted`)
+  const isArchived = useMatch(`/folders/:${folderId}/notes/:${noteId}/archieved`)
   const [showOptions, setShowOptions] = useState(false);
 
   const [noteAttributes, setNoteAttributes] = useState({
@@ -27,7 +28,6 @@ function ActiveNote() {
   });
 
   const optionsRef = useRef<HTMLDivElement | null>(null);
-  const { noteId, folderId } = useParams();
   const { data: fetchNoteData, callApi: fetchNote } = useApiRequest();
 
   const { error: patchNoteError, callApi: patchNoteData } = useApiRequest();
@@ -73,7 +73,7 @@ function ActiveNote() {
       folderId,
       ...updatedAttributes,
     });
-    navigate(`/folders/${folderId}`)
+    navigate(`/folders/${folderId}/notes/${noteId}/archived`);
   };
 
   const handleDelete = ()=>{
@@ -156,7 +156,7 @@ function ActiveNote() {
   }
   
   if(isDeleted)return <RestoreNote/>
-  if (!fetchNoteData || !noteId) return <EmptyNote />
+  if (!fetchNoteData || !noteId || isArchived) return <EmptyNote />
 
   return (
     <div className="flex flex-col gap-8 p-12 w-full h-[1024px]">

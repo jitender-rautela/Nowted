@@ -4,8 +4,12 @@ import { useFolders } from "../../context/FolderContext";
 import useApiRequest from "../../networkComponent/useApiRequest";
 import { NavLink, useLocation, useParams } from "react-router-dom";
 
-function fetchNotesData() {
-
+function FolderList() {
+  const location = useLocation();
+  const isArchived = location.pathname.includes("/archived");
+  const isDeleted = location.pathname.includes("/deleted");
+  const { noteId } = useParams();
+  const selectedNoteId = noteId;
 
   const {
     data: fetchNotesData,
@@ -14,19 +18,21 @@ function fetchNotesData() {
     callApi: fetchNotes,
   } = useApiRequest();
 
-  const created = (date: Date) => date.toLocaleDateString();
+  const created = (date: Date) =>
+    `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}/${date.getFullYear()}`;
 
-  const {selectedFolderName } = useFolders();
-  const {folderId} = useParams();
-  const location = useLocation();
+  const { selectedFolderName } = useFolders();
+  const { folderId } = useParams();
 
-  useEffect(()=>{
-    ;(async()=>{
-      await fetchNotes(`/notes?folderId=${folderId}`,"GET")
-    })()
-  },[folderId, location.key])
-
-
+  useEffect(() => {
+    (async () => {
+      console.log("Effect triggered:", { folderId, isArchived, isDeleted });
+      await fetchNotes(`/notes?folderId=${folderId}`, "GET");
+      console.log("fetching list of note");
+    })();
+  }, [folderId, isArchived, isDeleted]);
 
   return (
     <div className="folder-list-container">
@@ -35,15 +41,17 @@ function fetchNotesData() {
       <div className="folder-list-subcontainer overflow-scroll hide-scrollbar">
         {fetchNotesData?.notes?.map((note) => {
           return (
-            <NavLink key={note.id} to={`notes/${note.id}`}>
-              <div 
-                className="note-container"
-                // onClick={(event) => handleNoteClick(event, note.id)}
-              >
+            <NavLink
+              key={`${note.id}-${note.deletedAt}`}
+              to={`notes/${note.id}`}
+            >
+              <div
+                className={`note-container ${selectedNoteId === note.id ? "bg-white/10" : "bg-[rgba(255,255,255,0.03)]"}`}
+              >   
                 <span className="note-container-heading">{note.title}</span>
                 <div className="flex gap-[10px]">
                   <span className="note-date">
-                    {created(new Date(note.createdAt))}
+                    {created(new Date(note.updatedAt))}
                   </span>
 
                   <span className="note-preview">
@@ -61,4 +69,4 @@ function fetchNotesData() {
   );
 }
 
-export default fetchNotesData;
+export default FolderList;

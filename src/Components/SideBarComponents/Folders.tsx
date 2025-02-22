@@ -7,8 +7,7 @@ import { NavLink, useNavigate, useParams } from "react-router-dom";
 function Folders() {
   const [addFolder, setAddFolder] = useState(false);
   const [folderName, setFolderName] = useState("My New Folder");
-  const { setFolderList, setSelectedFolderName, selectedFolderName } =
-    useFolders();
+  const { setSelectedFolderName, selectedFolderName } = useFolders();
   const { folderId } = useParams();
 
   const navigate = useNavigate();
@@ -19,7 +18,6 @@ function Folders() {
     error: fetchFolderError,
     callApi: fetchFolders,
   } = useApiRequest();
-
 
   const {
     data: createFolderData,
@@ -49,9 +47,7 @@ function Folders() {
     setAddFolder(false);
   };
 
-
-
-// Fetch All the folders on mount and whevever addFolder
+  // Fetch All the folders on mount and whevever addFolder
   useEffect(() => {
     (async () => {
       try {
@@ -61,7 +57,6 @@ function Folders() {
       }
     })();
   }, [addFolder]);
-
 
   useEffect(() => {
     if (folderId) {
@@ -122,6 +117,7 @@ function Folders() {
                   folder.id === folderId ? "bg-white/5" : ""
                 }`}
                 key={folder.id}
+                onClick={()=>setSelectedFolderName(folder.name)}
               >
                 <img
                   className={`w-6 h-6 ${

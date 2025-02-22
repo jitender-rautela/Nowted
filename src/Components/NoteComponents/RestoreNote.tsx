@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import "../../index.css";
 import useApiRequest from "../../networkComponent/useApiRequest";
 
@@ -11,9 +11,7 @@ function RestoreNote() {
    } = useApiRequest()
 
   const handleRestore = async()=>{
-    await patchRestoreNote(`/notes/${noteId}/restore`,"POST")
-    navigate(`/folders/${folderId}/notes/${noteId}`)
-    
+    await patchRestoreNote(`/notes/${noteId}/restore`,"POST")    
   }
 
   return (
@@ -25,7 +23,11 @@ function RestoreNote() {
         'Restore' button and it will be added back to your list. It's that
         simple.
       </p>
+      <NavLink
+      to={`/folders/${folderId}/notes/${noteId}`}
+      key={noteId}>
       <input type="button" value="Restore" className="note-view-btn"  onClick={handleRestore}/>
+      </NavLink>
     </div>
   );
 }

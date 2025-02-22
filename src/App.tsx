@@ -29,7 +29,11 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />} />
         <Route path="folders/:folderId" element={<Layout />}>
-          <Route path="notes/:noteId" element={<Layout />} > <Route path="deleted" element={<Layout />} /></Route>
+          <Route path="notes/:noteId" element={<Layout />} >
+           <Route path="deleted" element={<Layout />} />
+           <Route path="archived" element={<Layout />} />
+           </Route>
+      
           
         </Route>
       </Routes>
