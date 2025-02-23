@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../../index.css";
 import { useFolders } from "../../context/FolderContext";
-import useApiRequest from "../../networkComponent/useApiRequest";
+import useApiRequest from "../../hooks/useApiRequest";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 
 function Folders() {
@@ -117,7 +117,7 @@ function Folders() {
                   folder.id === folderId ? "bg-white/5" : ""
                 }`}
                 key={folder.id}
-                onClick={()=>setSelectedFolderName(folder.name)}
+                onClick={() => setSelectedFolderName(folder.name)}
               >
                 <img
                   className={`w-6 h-6 ${

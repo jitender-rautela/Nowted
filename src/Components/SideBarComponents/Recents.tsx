@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import "../../index.css";
-import useApiRequest from "../../networkComponent/useApiRequest";
+import useApiRequest from "../../hooks/useApiRequest";
 
 function Recents() {
   const {
@@ -24,18 +24,13 @@ function Recents() {
 
   return (
     <div className="sidebar-subcontainer h-[156px]">
-      <span className="sidebar-heading">
-        Recents
-      </span>
+      <span className="sidebar-heading">Recents</span>
 
       <div className="flex flex-col gap-1 w-full h-full">
         {/* {recentNotesLoading && <p className="text-white">Loading...</p>}
         {recentNotesError && <p className="text-red-500">Error loading data</p>} */}
         {recentNotesData?.recentNotes?.map((folder: any) => (
-          <div
-            key={folder.id}
-            className="file-item group hover:bg-[#312EB5]"
-          >
+          <div key={folder.id} className="file-item group hover:bg-[#312EB5]">
             <img
               className="w-6 h-6 group-hover:hidden"
               src="../src/assets/file.svg"

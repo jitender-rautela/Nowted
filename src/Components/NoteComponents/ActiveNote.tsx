@@ -1,7 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import EmptyNote from "./EmptyNote";
-import { useLocation, useMatch, useNavigate, useParams } from "react-router-dom";
-import useApiRequest from "../../networkComponent/useApiRequest";
+import {
+  useLocation,
+  useMatch,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
+import useApiRequest from "../../hooks/useApiRequest";
 import RestoreNote from "./RestoreNote";
 
 interface PatchData {
@@ -18,8 +23,10 @@ function ActiveNote() {
   const [noteHeader, setNoteHeader] = useState<string>("");
   const [noteContent, setNoteContent] = useState<string>("");
   // const [isDeleted, setIsDeleted] = useState<boolean>(false);
-  const isDeleted = useMatch(`/folders/:${folderId}/notes/:${noteId}/deleted`)
-  const isArchived = useMatch(`/folders/:${folderId}/notes/:${noteId}/archieved`)
+  const isDeleted = useMatch(`/folders/:${folderId}/notes/:${noteId}/deleted`);
+  const isArchived = useMatch(
+    `/folders/:${folderId}/notes/:${noteId}/archieved`
+  );
   const [showOptions, setShowOptions] = useState(false);
 
   const [noteAttributes, setNoteAttributes] = useState({
@@ -32,12 +39,12 @@ function ActiveNote() {
 
   const { error: patchNoteError, callApi: patchNoteData } = useApiRequest();
 
-  const{
-    error:deleteNoteError,
-    loading:deleteNoteLoading,
-    data:deleteNoteData,
-    callApi:deleteNote
-  } = useApiRequest()
+  const {
+    error: deleteNoteError,
+    loading: deleteNoteLoading,
+    data: deleteNoteData,
+    callApi: deleteNote,
+  } = useApiRequest();
 
   const handleNoteHeader = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setNoteHeader(e.target.value);
@@ -76,18 +83,16 @@ function ActiveNote() {
     navigate(`/folders/${folderId}/notes/${noteId}/archived`);
   };
 
-  const handleDelete = ()=>{
-
-    (async()=>deleteNote(`/notes/${noteId}`,"DELETE"))();
-    setShowOptions(false)
+  const handleDelete = () => {
+    (async () => deleteNote(`/notes/${noteId}`, "DELETE"))();
+    setShowOptions(false);
     navigate(`/folders/${folderId}/notes/${noteId}/deleted`);
-
-  }
+  };
 
   useEffect(() => {
-    setShowOptions(false)
+    setShowOptions(false);
     if (!noteId) return;
-    ;(async () => {
+    (async () => {
       try {
         await fetchNote(`/notes/${noteId}`, "GET");
         console.log("Notes loaded..");
@@ -134,8 +139,8 @@ function ActiveNote() {
       isArchived: noteAttributes.isArchived,
     };
 
-    const timer = setTimeout(() => {
-      patchNoteData(`/notes/${noteId}`, "PATCH", patchData);
+    const timer = setTimeout(async () => {
+      await patchNoteData(`/notes/${noteId}`, "PATCH", patchData);
       console.log("Auto-saving...");
     }, 500);
 
@@ -154,9 +159,9 @@ function ActiveNote() {
       isArchived: fetchNoteData.note.isArchived,
     });
   }
-  
-  if(isDeleted)return <RestoreNote/>
-  if (!fetchNoteData || !noteId || isArchived) return <EmptyNote />
+
+  if (isDeleted) return <RestoreNote />;
+  if (!fetchNoteData || !noteId || isArchived) return <EmptyNote />;
 
   return (
     <div className="flex flex-col gap-8 p-12 w-full h-[1024px]">
@@ -216,8 +221,10 @@ function ActiveNote() {
 
                 <hr className="h-[1px] bg-white/50 border-none" />
 
-                <div className="flex gap-[15px] cursor-pointer"
-                onClick={handleDelete}>
+                <div
+                  className="flex gap-[15px] cursor-pointer"
+                  onClick={handleDelete}
+                >
                   <img src="../src/assets/trash.svg" alt="trash_icon" />
                   <span className="text-white text-[16px] hover:text-white/70">
                     Delete
@@ -259,7 +266,7 @@ function ActiveNote() {
         />
       </div>
     </div>
-  ); 
+  );
 }
 
 export default ActiveNote;

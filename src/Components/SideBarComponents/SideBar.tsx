@@ -3,7 +3,7 @@ import Recents from "./Recents.tsx";
 import Folders from "./Folders.tsx";
 import More from "./More.tsx";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
-import useApiRequest from "../../networkComponent/useApiRequest.tsx";
+import useApiRequest from "../../hooks/useApiRequest.tsx";
 
 function SideBar() {
   const [search, setSearch] = useState(true);
