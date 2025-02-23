@@ -1,16 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
-import Recents from "./Recents.tsx";
-import Folders from "./Folders.tsx";
-import More from "./More.tsx";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
-import useApiRequest from "../../hooks/useApiRequest.tsx";
+import{More, Recents, Folders, useApiRequest} from '../../index.tsx';
 
 function SideBar() {
-  const [search, setSearch] = useState(true);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [isSearchFocused, setIsSearchFocused] = useState(false); // Track input focus
   const navigate = useNavigate();
   const { folderId } = useParams();
+  const [search, setSearch] = useState(true);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const {
     data: postNoteData,

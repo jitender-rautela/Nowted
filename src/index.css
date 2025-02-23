@@ -3,83 +3,88 @@
 @tailwind utilities;
 
 
-/* Side bar Component--- */
-
-.sidebar-heading{
-  @apply font-[Source_Sans_Pro] font-semibold text-white/60 text-[14px] leading-[17.6px] tracking-normal
-}
-
-.sidebar-subcontainer{
-  @apply flex flex-col gap-2 w-[300px]
-}
-
-.file-item {
-  @apply flex gap-[15px] cursor-pointer items-center w-full h-[40px] pt-2 pb-2 hover:text-white transition-all duration-200;
-}
-
-.file-text {
-  @apply font-[Source_Sans_Pro] font-semibold text-[16px] leading-[20.11px] tracking-normal text-white/60 ;
-}
-
 @layer utilities {
-    .hide-scrollbar {
-      scrollbar-width: none; 
-      -ms-overflow-style: none; 
-    }
-  
-    .hide-scrollbar::-webkit-scrollbar {
-      display: none; 
-    }
+  /* Colors */
+  .theme-text-primary { @apply text-white; }
+  .theme-text-secondary { @apply text-white/60; }
+  .theme-bg-primary { @apply bg-[#1C1C1C]; }
+  .theme-bg-secondary { @apply bg-[#312EB5]; }
+
+  /* Typography */
+  .theme-font { @apply font-[Source_Sans_Pro]; }
+  .theme-heading { @apply theme-font font-semibold text-[22px] leading-[27.65px] tracking-normal; }
+  .theme-subtext { @apply theme-font text-[16px] leading-[20.11px] tracking-normal; }
+
+  /* Buttons */
+  .theme-button {
+    @apply text-white theme-font text-[16px] leading-[26px] tracking-normal bg-[#312EB5] px-[30px] py-[8px] rounded-md cursor-pointer;
   }
 
-  /* FolderList ---- */
-  .folder-list-container{
-    @apply w-[350px] h-[1024px] bg-[#1C1C1C] flex flex-col gap-[30px] pt-[30px] pr-[20px] pl-[20px]
+  /* Hide scrollbar */
+  .hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
-
-  .folder-list-heading{
-    @apply font-[Source_Sans_Pro] font-semibold text-[22px] leading-[27.65px] tracking-normal text-white
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
   }
+}
 
-  .folder-list-subcontainer{
-    @apply w-[310px] h-[862px] flex flex-col gap-[20px]  
-  }
 
-  .note-container{
-    @apply h-[98px] w-[310px]
- rounded-[3px] gap-[10px] p-[20px] cursor-pointer
-  }
+.sidebar-heading { 
+  @apply theme-font font-semibold theme-text-secondary text-[14px] leading-[17.6px]; 
+}
 
-  .note-container-heading{
-    @apply font-[Source_Sans_Pro] font-medium text-[18px] leading-[28px] tracking-normal text-white
-  }
+.sidebar-subcontainer { 
+  @apply flex flex-col gap-2 w-[300px]; 
+}
 
-  .note-date{
-    @apply font-[Source_Sans_Pro] font-normal text-[16px] leading-[20.11px] tracking-normal text-white/60
-  }
+.file-item { 
+  @apply flex gap-[15px] cursor-pointer items-center w-full h-[40px] py-2 hover:text-white transition-all duration-200; 
+}
 
-  .note-preview{
-    @apply font-[Source_Sans_Pro] font-normal text-[16px] leading-[20.11px] tracking-normal text-white/60
-  }
+.file-text { 
+  @apply theme-font font-semibold theme-subtext theme-text-secondary; 
+}
 
-  /* Note Component ---- */
 
-  /* Empty & Restore */
-  .note-view-container{
-    @apply w-full h-[1024px] flex flex-col justify-center items-center  gap-[10px]
-  }
+.folder-list-container { 
+  @apply w-[350px] h-[1024px] theme-bg-primary flex flex-col gap-[30px] pt-[30px] pr-[20px] pl-[20px]; 
+}
 
-  .note-view-h{
-    @apply text-white font-[Source_Sans_Pro] font-semibold text-[28px] leading-[35.2px] tracking-normal
-  }
+.folder-list-heading { 
+  @apply theme-heading theme-text-primary; 
+}
 
-  .note-view-p{
-    @apply text-white text-center w-[460px] font-[Source_Sans_Pro] font-normal text-white/60 text-[16px] leading-[26px] tracking-normal
-  }
-  
-  .note-view-btn{
-    @apply text-white font-[Source_Sans_Pro] font-normal text-[16px] leading-[26px] tracking-normal bg-[#312EB5] pr-[30px] pl-[30px] pt-[8px] pb-[8px] rounded-md cursor-pointer
-  }
+.folder-list-subcontainer { 
+  @apply w-[310px] h-[862px] flex flex-col gap-[20px]; 
+}
 
-  /*Active*/
-  
+
+.note-container { 
+  @apply h-[98px] w-[310px] rounded-[3px] gap-[10px] p-[20px] cursor-pointer; 
+}
+
+.note-container-heading { 
+  @apply theme-font font-medium text-[18px] leading-[28px] theme-text-primary; 
+}
+
+.note-date, .note-preview { 
+  @apply theme-subtext theme-text-secondary; 
+}
+
+.note-view-container { 
+  @apply w-full h-[1024px] flex flex-col justify-center items-center gap-[10px]; 
+}
+
+.note-view-h { 
+  @apply theme-heading text-[28px] leading-[35.2px] theme-text-primary; 
+}
+
+.note-view-p { 
+  @apply theme-subtext text-center w-[460px] theme-text-secondary; 
+}
+
+.note-view-btn { 
+  @apply theme-button; 
+}

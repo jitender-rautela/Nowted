@@ -11,17 +11,6 @@ import { NoteProvider } from "../context/NoteContext.tsx";
 import { Outlet } from "react-router-dom";
 import EmptyNote from "../Components/NoteComponents/EmptyNote.tsx";
 
-// const Container:React.FC=()=>{
-//     return(
-//         <div className="flex flex-row w-screen h-screen bg-[#222222] text-white font-sans">
-//             <SideBar/>
-//             <FolderView/>
-//             <NoteView/>
-//         </div>
-//     )
-// }
-
-// export default Container
 
 const Layout:React.FC =()=>{
     return(

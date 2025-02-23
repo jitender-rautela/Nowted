@@ -1,14 +1,21 @@
-import { useEffect } from "react";
 import "../../index.css";
-import useApiRequest from "../../hooks/useApiRequest";
+import { useEffect } from "react";
+import {
+  useApiRequest,
+  RecentResponseInterface,
+  NoteInterface,
+  NavLink,
+  useParams,
+} from "../../index.tsx";
 
 function Recents() {
+  const { noteId } = useParams();
   const {
     data: recentNotesData,
     loading: recentNotesLoading,
     error: recentNotesError,
     callApi: fetchRecentNotes,
-  } = useApiRequest();
+  } = useApiRequest<RecentResponseInterface>();
 
   useEffect(() => {
     (async () => {
@@ -20,31 +27,47 @@ function Recents() {
         console.log(error);
       }
     })();
-  }, []);
+  }, [noteId]);
 
   return (
     <div className="sidebar-subcontainer h-[156px]">
       <span className="sidebar-heading">Recents</span>
-
       <div className="flex flex-col gap-1 w-full h-full">
-        {/* {recentNotesLoading && <p className="text-white">Loading...</p>}
-        {recentNotesError && <p className="text-red-500">Error loading data</p>} */}
-        {recentNotesData?.recentNotes?.map((folder: any) => (
-          <div key={folder.id} className="file-item group hover:bg-[#312EB5]">
-            <img
-              className="w-6 h-6 group-hover:hidden"
-              src="../src/assets/file.svg"
-              alt="file img"
-            />
-            <img
-              className="w-6 h-6 hidden group-hover:block"
-              src="../src/assets/file-focus.svg"
-              alt="file img"
-            />
-            <span className="file-text group-hover:text-white ">
-              {folder.title}
-            </span>
-          </div>
+        {recentNotesLoading && <p className="text-white">Loading...</p>}
+        {recentNotesError && <p className="text-white">Error loading data</p>}
+        {recentNotesData?.recentNotes?.map((note: NoteInterface) => (
+          <NavLink
+            key={note.id}
+            to={`/folders/${note.folderId}/notes/${note.id}`} // Fixed template string issue
+          >
+            <div
+              className={`file-item rounded-md group ${
+                noteId === note.id ? "bg-[#312EB5]" : "hover:bg-[#312EB5]"
+              }`}
+            >
+              <img
+                className={`w-6 h-6 ${
+                  noteId === note.id ? "hidden" : "group-hover:hidden"
+                }`}
+                src="../src/assets/file.svg"
+                alt="file img"
+              />
+              <img
+                className={`w-6 h-6 ${
+                  noteId === note.id ? "block" : "hidden group-hover:block"
+                }`}
+                src="../src/assets/file-focus.svg"
+                alt="file img"
+              />
+              <span
+                className={`file-text ${
+                  noteId === note.id ? "text-white" : "group-hover:text-white"
+                }`}
+              >
+                {note.title}
+              </span>
+            </div>
+          </NavLink>
         ))}
       </div>
     </div>
