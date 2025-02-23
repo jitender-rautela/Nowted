@@ -1,15 +1,22 @@
-import { useEffect } from "react";
 import "../../index.css";
-import { useFolders } from "../../context/FolderContext";
-import useApiRequest from "../../hooks/useApiRequest";
-import { NavLink, useLocation, useParams } from "react-router-dom";
+import { useEffect } from "react";
+import {
+  useFolders,
+  useApiRequest,
+  NavLink,
+  useLocation,
+  useParams,
+  NoteResponseInterface,
+  customDate,
+} from "../../index.tsx";
 
 function FolderList() {
   const location = useLocation();
+  const { noteId, folderId } = useParams();
+  const { selectedFolderName } = useFolders();
   const isArchived = location.pathname.includes("/archived");
   const isDeleted = location.pathname.includes("/deleted");
   const isFavorites = location.pathname.includes("/favorites");
-  const { noteId } = useParams();
   const selectedNoteId = noteId;
 
   const {
@@ -17,15 +24,7 @@ function FolderList() {
     loading: fetchNotesLoading,
     error: fetchNotesError,
     callApi: fetchNotes,
-  } = useApiRequest();
-
-  const created = (date: Date) =>
-    `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1)
-      .toString()
-      .padStart(2, "0")}/${date.getFullYear()}`;
-
-  const { selectedFolderName } = useFolders();
-  const { folderId } = useParams();
+  } = useApiRequest<NoteResponseInterface>();
 
   useEffect(() => {
     (async () => {
@@ -56,35 +55,52 @@ function FolderList() {
       <span className="folder-list-heading">{selectedFolderName}</span>
 
       <div className="folder-list-subcontainer overflow-scroll hide-scrollbar">
-        {fetchNotesData?.notes?.map((note) => {
-          return (
-            <NavLink
-              key={`${note.id}-${note.deletedAt}`}
-              to={`notes/${note.id}`}
-            >
-              <div
-                className={`note-container ${
-                  selectedNoteId === note.id
-                    ? "bg-white/10"
-                    : "bg-[rgba(255,255,255,0.03)]"
-                }`}
-              >
-                <span className="note-container-heading">{note.title}</span>
-                <div className="flex gap-[10px]">
-                  <span className="note-date">
-                    {created(new Date(note.updatedAt))}
-                  </span>
+        {/* Show loading */}
+        {fetchNotesLoading && (
+          <div className="theme-text-primary">Loading notes...</div>
+        )}
 
-                  <span className="note-preview">
-                    {note.preview.length > 20
-                      ? `${note.preview.slice(0, 20)}...`
-                      : note.preview}
-                  </span>
+        {/* Show error message  */}
+        {fetchNotesError && (
+          <div className="theme-text-primary">
+            Error loading notes. Please try again.
+          </div>
+        )}
+
+        {!fetchNotesLoading &&
+        !fetchNotesError &&
+        (fetchNotesData?.notes || []).length > 0
+          ? fetchNotesData?.notes.map((note) => (
+              <NavLink
+                key={`${note.id}-${note.deletedAt}`}
+                to={`notes/${note.id}`}
+              >
+                <div
+                  className={`note-container ${
+                    selectedNoteId === note.id
+                      ? "bg-white/10"
+                      : "bg-[rgba(255,255,255,0.03)]"
+                  }`}
+                >
+                  <span className="note-container-heading">{note.title}</span>
+                  <div className="flex gap-[10px]">
+                    <span className="note-date">
+                      {customDate(new Date(note.updatedAt))}
+                    </span>
+                    <span className="note-preview">
+                      {note.preview.length > 20
+                        ? `${note.preview.slice(0, 20)}...`
+                        : note.preview}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </NavLink>
-          );
-        })}
+              </NavLink>
+            ))
+          : //no notes are found
+            !fetchNotesLoading &&
+            !fetchNotesError && (
+              <div className="text-gray-400 p-2">No notes available</div>
+            )}
       </div>
     </div>
   );

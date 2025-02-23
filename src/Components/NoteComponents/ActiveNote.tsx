@@ -1,32 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
-import EmptyNote from "./EmptyNote";
 import {
-  useLocation,
+  EmptyNote,
+  RestoreNote,
   useMatch,
-  useNavigate,
   useParams,
-} from "react-router-dom";
-import useApiRequest from "../../hooks/useApiRequest";
-import RestoreNote from "./RestoreNote";
-
-interface PatchData {
-  folderId: string;
-  title?: string;
-  content?: string;
-  isFavorite?: boolean;
-  isArchived?: boolean;
-}
+  useNavigate,
+  useApiRequest,
+  useLocation,
+  PatchNoteInterface,
+  NoteIdResponseInterface,
+  NavLink,
+} from "../../index.tsx";
 
 function ActiveNote() {
   const { noteId, folderId } = useParams();
   const navigate = useNavigate();
   const [noteHeader, setNoteHeader] = useState<string>("");
   const [noteContent, setNoteContent] = useState<string>("");
-  // const [isDeleted, setIsDeleted] = useState<boolean>(false);
-  const isDeleted = useMatch(`/folders/:${folderId}/notes/:${noteId}/deleted`);
-  const isArchived = useMatch(
-    `/folders/:${folderId}/notes/:${noteId}/archieved`
-  );
+  const location = useLocation();
+  const isDeleted = location.pathname.includes(`/deleted`);
   const [showOptions, setShowOptions] = useState(false);
 
   const [noteAttributes, setNoteAttributes] = useState({
@@ -35,16 +27,16 @@ function ActiveNote() {
   });
 
   const optionsRef = useRef<HTMLDivElement | null>(null);
-  const { data: fetchNoteData, callApi: fetchNote } = useApiRequest();
-
-  const { error: patchNoteError, callApi: patchNoteData } = useApiRequest();
-
+  const { data: fetchNoteData, callApi: fetchNote } =
+    useApiRequest<NoteIdResponseInterface>();
+  const { error: patchNoteError, callApi: patchNoteData } =
+    useApiRequest<string>();
   const {
     error: deleteNoteError,
     loading: deleteNoteLoading,
     data: deleteNoteData,
     callApi: deleteNote,
-  } = useApiRequest();
+  } = useApiRequest<string>();
 
   const handleNoteHeader = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setNoteHeader(e.target.value);
@@ -57,6 +49,7 @@ function ActiveNote() {
   const handleNoteContent = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setNoteContent(e.target.value);
   };
+
   const toggleFavorite = async () => {
     const updatedAttributes = {
       ...noteAttributes,
@@ -76,35 +69,38 @@ function ActiveNote() {
       isArchived: !noteAttributes.isArchived,
     };
     setNoteAttributes(updatedAttributes);
-    await patchNoteData(`/notes/${noteId}`, "PATCH", {
+    const response = await patchNoteData(`/notes/${noteId}`, "PATCH", {
       folderId,
       ...updatedAttributes,
     });
-    navigate(`/folders/${folderId}/notes/${noteId}/archived`);
+
+    if (response) {
+      navigate(`/folders/${folderId}/archived`);
+    }
   };
 
   const handleDelete = () => {
-    (async () => deleteNote(`/notes/${noteId}`, "DELETE"))();
-    setShowOptions(false);
-    navigate(`/folders/${folderId}/notes/${noteId}/deleted`);
+    (async () => {
+      const response = await deleteNote(`/notes/${noteId}`, "DELETE");
+
+      setShowOptions(false);
+      navigate(`/folders/${folderId}/notes/${noteId}/deleted`);
+      // if (response) {
+      // }
+    })();
   };
 
   useEffect(() => {
     setShowOptions(false);
     if (!noteId) return;
     (async () => {
-      try {
-        await fetchNote(`/notes/${noteId}`, "GET");
-        console.log("Notes loaded..");
-      } catch (error) {
-        console.log(error);
-        console.log("errorrr");
-      }
+      await fetchNote(`/notes/${noteId}`, "GET");
+      console.log("Notes loaded..");
     })();
   }, [noteId]);
 
   useEffect(() => {
-    if (fetchNoteData) {
+    if (fetchNoteData?.note) {
       setNoteHeader(fetchNoteData.note.title || "");
       setNoteContent(fetchNoteData.note.content || "");
       setNoteAttributes((prev) => ({
@@ -131,7 +127,7 @@ function ActiveNote() {
 
   useEffect(() => {
     if (!noteId || !noteHeader) return;
-    const patchData: PatchData = {
+    const patchData: PatchNoteInterface = {
       folderId: folderId ? folderId : "",
       title: noteHeader,
       content: noteContent,
@@ -161,7 +157,7 @@ function ActiveNote() {
   }
 
   if (isDeleted) return <RestoreNote />;
-  if (!fetchNoteData || !noteId || isArchived) return <EmptyNote />;
+  if (!noteId) return <EmptyNote />;
 
   return (
     <div className="flex flex-col gap-8 p-12 w-full h-[1024px]">
@@ -210,7 +206,7 @@ function ActiveNote() {
                         ? "../src/assets/archived-fill.svg"
                         : "../src/assets/archived.svg"
                     }
-                    alt="favorite_icon"
+                    alt="archived_icon"
                   />
                   <span className="text-white text-[16px] hover:text-white/70">
                     {noteAttributes.isArchived
@@ -242,9 +238,11 @@ function ActiveNote() {
             <img src="../src/assets/calender.svg" alt="Calendar" />
             <span className="text-white/60 text-sm">Date</span>
           </div>
-          <span className="text-white text-sm">
-            {new Date(fetchNoteData.note.createdAt).toLocaleDateString()}
-          </span>
+          {fetchNoteData?.note?.createdAt && (
+            <span className="text-white text-sm">
+              {new Date(fetchNoteData.note.createdAt).toLocaleDateString()}
+            </span>
+          )}
         </div>
         <hr />
         <div className="flex gap-6">
@@ -253,7 +251,7 @@ function ActiveNote() {
             <span className="text-white/60 text-sm">Folder</span>
           </div>
           <span className="text-white text-sm">
-            {fetchNoteData.note.folder?.name || "No Folder"}
+            {fetchNoteData?.note.folder?.name || "No Folder"}
           </span>
         </div>
       </div>

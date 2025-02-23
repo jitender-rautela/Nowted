@@ -10,6 +10,7 @@ export interface FolderInterface {
     id: string;
     folderId: string;
     title: string;
+    content?:string;
     isFavorite: boolean;
     isArchived: boolean;
     createdAt: string;
@@ -24,6 +25,24 @@ export interface FolderInterface {
     length: number; 
   }
 
+  export interface NoteResponseInterface {
+    notes : NoteInterface[];
+  }
+
+  export interface NoteIdResponseInterface {
+    note: NoteInterface;
+  }
+
   export interface RecentResponseInterface{
     recentNotes: NoteInterface[];
   }
+
+  export interface PatchNoteInterface {
+    folderId: string;
+    title?: string;
+    content?: string;
+    isFavorite?: boolean;
+    isArchived?: boolean;
+  }
+
+ 

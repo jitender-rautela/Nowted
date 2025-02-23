@@ -31,8 +31,8 @@ function App() {
         <Route path="folders/:folderId" element={<Layout />}>
           <Route path="notes/:noteId" element={<Layout />} >
            <Route path="deleted" element={<Layout />} />
-           <Route path="archived" element={<Layout />} />
-           </Route>    
+           </Route>   
+           <Route path="archived" element={<Layout />} /> 
           
         </Route>
         <Route path="favorites" element={<Layout/>}>

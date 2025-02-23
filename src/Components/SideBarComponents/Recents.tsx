@@ -5,70 +5,83 @@ import {
   RecentResponseInterface,
   NoteInterface,
   NavLink,
-  useParams,
+  useParams,  
 } from "../../index.tsx";
 
 function Recents() {
-  const { noteId } = useParams();
+  const { noteId, folderId } = useParams();
   const {
     data: recentNotesData,
-    loading: recentNotesLoading,
     error: recentNotesError,
+    loading: recentNotesLoading,
     callApi: fetchRecentNotes,
   } = useApiRequest<RecentResponseInterface>();
 
   useEffect(() => {
     (async () => {
       try {
-        console.log("Fetching...");
+        console.log("Fetching recent notes...");
         await fetchRecentNotes("/notes/recent", "GET");
-        console.log("done");
+        console.log("Fetch complete.");
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching recent notes:", error);
       }
     })();
-  }, [noteId]);
+  }, [noteId]); 
 
   return (
     <div className="sidebar-subcontainer h-[156px]">
       <span className="sidebar-heading">Recents</span>
       <div className="flex flex-col gap-1 w-full h-full">
-        {recentNotesLoading && <p className="text-white">Loading...</p>}
-        {recentNotesError && <p className="text-white">Error loading data</p>}
-        {recentNotesData?.recentNotes?.map((note: NoteInterface) => (
-          <NavLink
-            key={note.id}
-            to={`/folders/${note.folderId}/notes/${note.id}`} // Fixed template string issue
-          >
-            <div
-              className={`file-item rounded-md group ${
-                noteId === note.id ? "bg-[#312EB5]" : "hover:bg-[#312EB5]"
-              }`}
-            >
-              <img
-                className={`w-6 h-6 ${
-                  noteId === note.id ? "hidden" : "group-hover:hidden"
-                }`}
-                src="../src/assets/file.svg"
-                alt="file img"
-              />
-              <img
-                className={`w-6 h-6 ${
-                  noteId === note.id ? "block" : "hidden group-hover:block"
-                }`}
-                src="../src/assets/file-focus.svg"
-                alt="file img"
-              />
-              <span
-                className={`file-text ${
-                  noteId === note.id ? "text-white" : "group-hover:text-white"
-                }`}
+        {/* Loading State */}
+        {recentNotesLoading && <p className="theme-text-primary">Loading...</p>}
+
+        {/* Error State */}
+        {recentNotesError && (
+          <p className="theme-text-primary">Error loading data. Please try again.</p>
+        )}
+
+       
+        {!recentNotesLoading &&
+          !recentNotesError &&
+          (recentNotesData?.recentNotes?.length ? (
+            recentNotesData.recentNotes.map((note: NoteInterface) => (
+              <NavLink
+                key={note.id}
+                to={`/folders/${note.folderId}/notes/${note.id}`} 
               >
-                {note.title}
-              </span>
-            </div>
-          </NavLink>
-        ))}
+                <div
+                  className={`file-item rounded-md group ${
+                    noteId === note.id ? "bg-[#312EB5]" : "hover:bg-[#312EB5]"
+                  }`}
+                >
+                  <img
+                    className={`w-6 h-6 ${
+                      noteId === note.id ? "hidden" : "group-hover:hidden"
+                    }`}
+                    src="../src/assets/file.svg"
+                    alt="file img"
+                  />
+                  <img
+                    className={`w-6 h-6 ${
+                      noteId === note.id ? "block" : "hidden group-hover:block"
+                    }`}
+                    src="../src/assets/file-focus.svg"
+                    alt="file img"
+                  />
+                  <span
+                    className={`file-text ${
+                      noteId === note.id ? "text-white" : "group-hover:text-white"
+                    }`}
+                  >
+                    {note.title}
+                  </span>
+                </div>
+              </NavLink>
+            ))
+          ) : (
+            <p className="text-gray-400">No recent notes found.</p>
+          ))}
       </div>
     </div>
   );

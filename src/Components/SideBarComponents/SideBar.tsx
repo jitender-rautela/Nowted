@@ -1,10 +1,11 @@
 import { useEffect, useState, useCallback } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
-import{More, Recents, Folders, useApiRequest} from '../../index.tsx';
+import{More, Recents, Folders, useApiRequest, NoteResponseInterface, useFolders} from '../../index.tsx';
 
 function SideBar() {
   const navigate = useNavigate();
   const { folderId } = useParams();
+  const {setSelectedFolderName} = useFolders()
   const [search, setSearch] = useState(true);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -14,27 +15,31 @@ function SideBar() {
     loading: postNoteLoading,
     error: postNoteError,
     callApi: postNote,
-  } = useApiRequest();
+  } = useApiRequest<{id:string}>();
 
   const {
     data: searchNoteData,
     loading: searchNoteLoading,
     error: searchNoteError,
     callApi: searchNote,
-  } = useApiRequest();
+  } = useApiRequest<NoteResponseInterface>();
 
   const toggleSearch = () => setSearch((prev) => !prev);
 
   const handleCreateNote = async () => {
     if (!folderId) return;
-    await postNote("/notes", "POST", {
+    const response = await postNote("/notes", "POST", {
       folderId,
       title: "Untitled Note",
       content: "Click to edit ...",
       isFavorite: false,
       isArchived: false,
     });
-    console.log("New note created");
+
+    if (response?.id) {
+      navigate(`/folders/${folderId}/notes/${response.id}`)
+      console.log("New note created");
+    }
   };
 
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,18 +49,13 @@ function SideBar() {
   useEffect(() => {
     if (!searchQuery.trim()) return;
 
-    const delayDebounce = setTimeout(() => {
-      searchNote(`/notes?search=${searchQuery}`, "GET");
+    const delayDebounce = setTimeout(async() => {
+      await searchNote(`/notes?search=${searchQuery}`, "GET");
     }, 500);
 
     return () => clearTimeout(delayDebounce);
   }, [searchQuery]);
 
-  useEffect(() => {
-    if (postNoteData?.id) {
-      navigate(`/folders/${folderId}/notes/${postNoteData.id}`);
-    }
-  }, [postNoteData, folderId, navigate]);
 
   return (
     <div className="side-bar flex flex-col w-[300px] h-[1024px] bg-[#181818] pt-[30px] pb-[30px] pr-[20px] pl-[20px] gap-[30px]">
@@ -104,17 +104,21 @@ function SideBar() {
             <div className="absolute left-0 w-full bg-[#1C1C1C] h-[200px] z-40 mt-2 flex flex-col gap-1 overflow-scroll hide-scrollbar">
               {searchNoteLoading ? (
                 <div className="text-white p-2">Loading...</div>
-              ) : searchNoteData?.notes?.length > 0 ? (
-                searchNoteData.notes.map((note) => (
+              ) : (searchNoteData?.notes || []).length > 0 ? (
+                searchNoteData?.notes?.map((note) => (
                   <NavLink
-                    to={`/folders/${note.folder.id}/notes/${note.id}`}
-                    key={note.id}
-                    onMouseDown={(e) => e.preventDefault()}
-                  >
-                    <div className="text-white p-2 hover:bg-white/10 cursor-pointer">
-                      {note.title}
-                    </div>
-                  </NavLink>
+                  to={`/folders/${note.folder.id}/notes/${note.id}`}
+                  key={note.id}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => {
+                    setSearch(true);
+                    setSelectedFolderName(note.folder.name);
+                  }}
+                >
+                  <div className="text-white p-2 hover:bg-white/10 cursor-pointer">
+                    {note.title}
+                  </div>
+                </NavLink>
                 ))
               ) : (
                 <div className="text-gray-400 p-2">No results found</div>
