@@ -17,6 +17,7 @@ function FolderList() {
   const isArchived = location.pathname.includes("/archived");
   const isDeleted = location.pathname.includes("/deleted");
   const isFavorites = location.pathname.includes("/favorites");
+  const istrashFolderList = location.pathname.includes("/trash");
   const selectedNoteId = noteId;
 
   const {
@@ -28,17 +29,17 @@ function FolderList() {
 
   useEffect(() => {
     (async () => {
-      console.log("Effect triggered:", {
-        folderId,
-        isArchived,
-        isDeleted,
-        isFavorites,
-      });
+      // console.log("Effect triggered:", {
+      //   folderId,
+      //   isArchived,
+      //   isDeleted,
+      //   isFavorites,
+      // });
 
       let apiUrl = "";
 
-      if (isFavorites) {
-        apiUrl = `/notes?favorites=${true}`;
+      if (istrashFolderList) {
+        apiUrl = `/notes?deleted=${true}`;
       } else if (folderId) {
         apiUrl = `/notes?folderId=${folderId}`;
       }
@@ -48,7 +49,7 @@ function FolderList() {
         console.log("Fetching notes:", apiUrl);
       }
     })();
-  }, [folderId, isArchived, isDeleted, isFavorites]);
+  }, [folderId, isArchived, isDeleted,istrashFolderList]);
 
   return (
     <div className="folder-list-container">
@@ -73,7 +74,8 @@ function FolderList() {
           ? fetchNotesData?.notes.map((note) => (
               <NavLink
                 key={`${note.id}-${note.deletedAt}`}
-                to={`notes/${note.id}`}
+                
+                to={istrashFolderList?`notes/${note.id}/deleted`:`notes/${note.id}`}
               >
                 <div
                   className={`note-container ${

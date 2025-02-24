@@ -1,42 +1,25 @@
-import SideBar from "./Components/SideBarComponents/SideBar.tsx";
-import FolderList from "./Components/FolderList/FolderList.tsx";
-import ActiveNote from "./Components/NoteComponents/ActiveNote.tsx";
-import { FolderProvider } from "./context/FolderContext.tsx";
-import { NoteProvider } from "./context/NoteContext.tsx";
-import { Outlet } from "react-router-dom";
-import EmptyNote from "./Components/NoteComponents/EmptyNote.tsx";
-import {
-  BrowserRouter as Router,
-  createRoutesFromElements,
-  Route,
-  RouterProvider,
-  Routes,
-} from "react-router-dom";
 import Layout from "./layout/Layout.tsx";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 function App() {
   return (
-    // <FolderProvider>
-    //   <NoteProvider>
-    //     <SideBar />
-    //     <FolderList />
-    //     <EmptyNote/> nbzc bncx
-    //     {/* <Outlet /> */}
-    //   </NoteProvider>
-    // </FolderProvider>
-
     <Router>
       <Routes>
         <Route path="/" element={<Layout />} />
+
+        {/* Folders Route */}
         <Route path="folders/:folderId" element={<Layout />}>
-          <Route path="notes/:noteId" element={<Layout />} >
-           <Route path="deleted" element={<Layout />} />
-           </Route>   
-           <Route path="archived" element={<Layout />} /> 
-          
+          <Route path="notes/:noteId" element={<Layout />}>
+            <Route path="deleted" element={<Layout />} />
+          <Route path="archived" element={<Layout />} />
+          </Route>
         </Route>
-        <Route path="favorites" element={<Layout/>}>
-        <Route path="notes/:noteId" element={<Layout/>}/>
+
+        {/* Trash Route */}
+        <Route path="trash" element={<Layout />}>
+          <Route path="notes/:noteId" element={<Layout />}>
+            <Route path="deleted" element={<Layout />} />
+          </Route>
         </Route>
       </Routes>
     </Router>

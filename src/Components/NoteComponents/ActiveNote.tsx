@@ -2,14 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   EmptyNote,
   RestoreNote,
-  useMatch,
   useParams,
   useNavigate,
   useApiRequest,
   useLocation,
   PatchNoteInterface,
   NoteIdResponseInterface,
-  NavLink,
 } from "../../index.tsx";
 
 function ActiveNote() {
@@ -18,7 +16,7 @@ function ActiveNote() {
   const [noteHeader, setNoteHeader] = useState<string>("");
   const [noteContent, setNoteContent] = useState<string>("");
   const location = useLocation();
-  const isDeleted = location.pathname.includes(`/deleted`);
+  // const isDeleted = location.pathname.includes(`/deleted`);
   const [showOptions, setShowOptions] = useState(false);
 
   const [noteAttributes, setNoteAttributes] = useState({
@@ -75,7 +73,7 @@ function ActiveNote() {
     });
 
     if (response) {
-      navigate(`/folders/${folderId}/archived`);
+      navigate(`/folders/${folderId}/notes/${noteId}/archived`);
     }
   };
 
@@ -83,10 +81,10 @@ function ActiveNote() {
     (async () => {
       const response = await deleteNote(`/notes/${noteId}`, "DELETE");
 
-      setShowOptions(false);
-      navigate(`/folders/${folderId}/notes/${noteId}/deleted`);
-      // if (response) {
-      // }
+      if (response) {
+        setShowOptions(false);
+        navigate(`/folders/${folderId}/notes/${noteId}/deleted`);
+      }
     })();
   };
 
@@ -94,7 +92,11 @@ function ActiveNote() {
     setShowOptions(false);
     if (!noteId) return;
     (async () => {
-      await fetchNote(`/notes/${noteId}`, "GET");
+      const response = await fetchNote(`/notes/${noteId}`, "GET");
+
+      if(response?.note.deletedAt){
+        navigate(`/trash/notes/${noteId}/deleted`)
+      }
       console.log("Notes loaded..");
     })();
   }, [noteId]);
@@ -156,8 +158,8 @@ function ActiveNote() {
     });
   }
 
-  if (isDeleted) return <RestoreNote />;
-  if (!noteId) return <EmptyNote />;
+  // if (isDeleted) return <RestoreNote />;
+  // if (!noteId) return <EmptyNote />;
 
   return (
     <div className="flex flex-col gap-8 p-12 w-full h-[1024px]">

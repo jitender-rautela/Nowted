@@ -15,6 +15,7 @@ function Folders() {
   const [folderName, setFolderName] = useState("My New Folder");
   const [newFolderName, setNewFolderName] = useState("");
   const [renamingFolderId, setRenamingFolderId] = useState<string | null>(null);
+  const istrashFolderList = location.pathname.includes("/trash"); 
 
   const { setSelectedFolderName } = useFolders();
   const { folderId } = useParams();
@@ -72,6 +73,12 @@ function Folders() {
 
   // Relocate to first folder by default
   useEffect(() => {
+    // If viewing trahed note
+    if(istrashFolderList){
+      setSelectedFolderName("Trash");
+      return;      
+    }
+
     if (fetchFolderData?.folders && fetchFolderData.folders.length > 0) {
       if (!folderId) {
         const firstFolder = fetchFolderData.folders[0];

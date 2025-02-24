@@ -9,7 +9,7 @@ import {
 } from "../../index.tsx";
 
 function Recents() {
-  const { noteId, folderId } = useParams();
+  const { noteId,} = useParams();
   const {
     data: recentNotesData,
     error: recentNotesError,

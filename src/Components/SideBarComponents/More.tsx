@@ -18,8 +18,8 @@ function More() {
         </div>
       </NavLink>
 
-      <NavLink to={"/trash"} key={"trash"}>
-        <div className="flex flex-col gap-1 w-full h-full ">
+      <NavLink to={`/trash`} key={"trash"} className="flex flex-col gap-1 w-full h-full ">
+        <div>
           <div className="file-item">
             <img
               src="../src/assets/trash.svg"
