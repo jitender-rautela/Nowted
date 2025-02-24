@@ -11,7 +11,7 @@ function App() {
         <Route path="folders/:folderId" element={<Layout />}>
           <Route path="notes/:noteId" element={<Layout />}>
             <Route path="deleted" element={<Layout />} />
-          <Route path="archived" element={<Layout />} />
+            <Route path="archived" element={<Layout />} />
           </Route>
         </Route>
 
@@ -20,6 +20,16 @@ function App() {
           <Route path="notes/:noteId" element={<Layout />}>
             <Route path="deleted" element={<Layout />} />
           </Route>
+        </Route>
+
+        {/* Favorites Route */}
+        <Route path="favorites" element={<Layout />}>
+          <Route path="notes/:noteId" element={<Layout />} />
+        </Route>
+
+        {/* Archived Route */}
+        <Route path="archives" element={<Layout />}>
+          <Route path="notes/:noteId" element={<Layout />} />
         </Route>
       </Routes>
     </Router>

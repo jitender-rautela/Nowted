@@ -50,7 +50,7 @@ function SideBar() {
     if (!searchQuery.trim()) return;
 
     const delayDebounce = setTimeout(async() => {
-      await searchNote(`/notes?search=${searchQuery}`, "GET");
+      await searchNote(`/notes?search=${searchQuery}?deleted=${false}`, "GET");
     }, 500);
 
     return () => clearTimeout(delayDebounce);

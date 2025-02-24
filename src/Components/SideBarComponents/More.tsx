@@ -31,7 +31,7 @@ function More() {
         </div>
       </NavLink>
 
-      <NavLink to={"/archived"} key={"archived"}>
+      <NavLink to={"/archives"} key={"archives"}>
         <div className="flex flex-col gap-1 w-full h-full ">
           <div className="file-item">
             <img

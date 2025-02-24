@@ -16,6 +16,8 @@ function Folders() {
   const [newFolderName, setNewFolderName] = useState("");
   const [renamingFolderId, setRenamingFolderId] = useState<string | null>(null);
   const istrashFolderList = location.pathname.includes("/trash"); 
+  const isFavoritesFolderList = location.pathname.includes("/favorites");
+  const isArchivesFolderList = location.pathname.includes("/archives"); 
 
   const { setSelectedFolderName } = useFolders();
   const { folderId } = useParams();
@@ -73,10 +75,16 @@ function Folders() {
 
   // Relocate to first folder by default
   useEffect(() => {
-    // If viewing trahed note
+    // If viewing trahed
     if(istrashFolderList){
       setSelectedFolderName("Trash");
       return;      
+    }else if(isFavoritesFolderList){
+      setSelectedFolderName("Favorites")
+      return;
+    }else if(isArchivesFolderList){
+      setSelectedFolderName("Archives")
+      return;
     }
 
     if (fetchFolderData?.folders && fetchFolderData.folders.length > 0) {

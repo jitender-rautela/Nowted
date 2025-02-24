@@ -15,14 +15,15 @@ function ActiveNote() {
   const navigate = useNavigate();
   const [noteHeader, setNoteHeader] = useState<string>("");
   const [noteContent, setNoteContent] = useState<string>("");
-  const location = useLocation();
-  // const isDeleted = location.pathname.includes(`/deleted`);
+  const [currentFolderId, setCurrentFolderId] = useState(folderId);
   const [showOptions, setShowOptions] = useState(false);
-
   const [noteAttributes, setNoteAttributes] = useState({
     isFavorite: false,
     isArchived: false,
   });
+  const location = useLocation();
+  const isFavoritesFolderList = location.pathname.includes("/favorites");
+  const isArchivesFolderList = location.pathname.includes("/archives");
 
   const optionsRef = useRef<HTMLDivElement | null>(null);
   const { data: fetchNoteData, callApi: fetchNote } =
@@ -48,17 +49,20 @@ function ActiveNote() {
     setNoteContent(e.target.value);
   };
 
-  const toggleFavorite = async () => {
+  const toggleFavorite = async () => { 
     const updatedAttributes = {
       ...noteAttributes,
       isFavorite: !noteAttributes.isFavorite,
     };
     setNoteAttributes(updatedAttributes);
-    await patchNoteData(`/notes/${noteId}`, "PATCH", {
+    const response = await patchNoteData(`/notes/${noteId}`, "PATCH", {
       folderId,
       ...updatedAttributes,
     });
-    console.log("waiting...");
+
+    if(response && isFavoritesFolderList){
+      navigate(`/favorites`)
+    }
   };
 
   const toggleArchive = async () => {
@@ -73,7 +77,8 @@ function ActiveNote() {
     });
 
     if (response) {
-      navigate(`/folders/${folderId}/notes/${noteId}/archived`);
+      {isArchivesFolderList? navigate(`/folders/${currentFolderId}/notes/${noteId}`):navigate(`/folders/${currentFolderId}/notes/${noteId}/archived`)};
+      
     }
   };
 
@@ -94,8 +99,12 @@ function ActiveNote() {
     (async () => {
       const response = await fetchNote(`/notes/${noteId}`, "GET");
 
-      if(response?.note.deletedAt){
-        navigate(`/trash/notes/${noteId}/deleted`)
+      if(response?.note){
+        setCurrentFolderId(response?.note?.folder.id);
+        if(response?.note.deletedAt){
+
+          navigate(`/trash/notes/${noteId}/deleted`)
+        }
       }
       console.log("Notes loaded..");
     })();

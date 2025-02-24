@@ -19,13 +19,8 @@ function Recents() {
 
   useEffect(() => {
     (async () => {
-      try {
-        console.log("Fetching recent notes...");
         await fetchRecentNotes("/notes/recent", "GET");
-        console.log("Fetch complete.");
-      } catch (error) {
-        console.error("Error fetching recent notes:", error);
-      }
+        console.log("Fetch complete.");     
     })();
   }, [noteId]); 
 
