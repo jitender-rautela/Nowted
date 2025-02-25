@@ -50,7 +50,14 @@ function SideBar() {
     if (!searchQuery.trim()) return;
 
     const delayDebounce = setTimeout(async() => {
-      await searchNote(`/notes?search=${searchQuery}?deleted=${false}`, "GET");
+      const response = await searchNote(`/notes?search=${searchQuery}&deleted=${false}`, "GET");
+
+      if(response){
+        console.log("Search request successful")
+      }else{
+        console.log("Search request failed")
+      }
+
     }, 500);
 
     return () => clearTimeout(delayDebounce);

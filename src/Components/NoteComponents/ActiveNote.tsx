@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  EmptyNote,
-  RestoreNote,
   useParams,
   useNavigate,
   useApiRequest,
@@ -11,17 +9,17 @@ import {
 } from "../../index.tsx";
 
 function ActiveNote() {
-  const { noteId, folderId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { noteId, folderId } = useParams();
+  const [showOptions, setShowOptions] = useState(false);
   const [noteHeader, setNoteHeader] = useState<string>("");
   const [noteContent, setNoteContent] = useState<string>("");
   const [currentFolderId, setCurrentFolderId] = useState(folderId);
-  const [showOptions, setShowOptions] = useState(false);
   const [noteAttributes, setNoteAttributes] = useState({
     isFavorite: false,
     isArchived: false,
   });
-  const location = useLocation();
   const isFavoritesFolderList = location.pathname.includes("/favorites");
   const isArchivesFolderList = location.pathname.includes("/archives");
 
@@ -30,6 +28,7 @@ function ActiveNote() {
     useApiRequest<NoteIdResponseInterface>();
   const { error: patchNoteError, callApi: patchNoteData } =
     useApiRequest<string>();
+
   const {
     error: deleteNoteError,
     loading: deleteNoteLoading,
@@ -45,11 +44,12 @@ function ActiveNote() {
     e.stopPropagation();
     setShowOptions((prev) => !prev);
   };
+
   const handleNoteContent = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setNoteContent(e.target.value);
   };
 
-  const toggleFavorite = async () => { 
+  const toggleFavorite = async () => {
     const updatedAttributes = {
       ...noteAttributes,
       isFavorite: !noteAttributes.isFavorite,
@@ -60,8 +60,8 @@ function ActiveNote() {
       ...updatedAttributes,
     });
 
-    if(response && isFavoritesFolderList){
-      navigate(`/favorites`)
+    if (response && isFavoritesFolderList) {
+      navigate(`/favorites`);
     }
   };
 
@@ -77,8 +77,11 @@ function ActiveNote() {
     });
 
     if (response) {
-      {isArchivesFolderList? navigate(`/folders/${currentFolderId}/notes/${noteId}`):navigate(`/folders/${currentFolderId}/notes/${noteId}/archived`)};
-      
+      {
+        isArchivesFolderList
+          ? navigate(`/folders/${currentFolderId}/notes/${noteId}`)
+          : navigate(`/folders/${currentFolderId}/notes/${noteId}/archived`);
+      }
     }
   };
 
@@ -99,28 +102,36 @@ function ActiveNote() {
     (async () => {
       const response = await fetchNote(`/notes/${noteId}`, "GET");
 
-      if(response?.note){
+      if (response?.note) {
         setCurrentFolderId(response?.note?.folder.id);
-        if(response?.note.deletedAt){
 
-          navigate(`/trash/notes/${noteId}/deleted`)
+        setNoteHeader(response.note.title || "");
+        setNoteContent(response.note.content || "");
+        setNoteAttributes((prev) => ({
+          ...prev,
+          isFavorite: response.note.isFavorite,
+          isArchived: response.note.isArchived,
+        }));
+
+        if (response?.note.deletedAt) {
+          navigate(`/trash/notes/${noteId}/deleted`);
         }
       }
-      console.log("Notes loaded..");
+      console.log("Note loaded..");
     })();
   }, [noteId]);
 
-  useEffect(() => {
-    if (fetchNoteData?.note) {
-      setNoteHeader(fetchNoteData.note.title || "");
-      setNoteContent(fetchNoteData.note.content || "");
-      setNoteAttributes((prev) => ({
-        ...prev,
-        isFavorite: fetchNoteData.note.isFavorite,
-        isArchived: fetchNoteData.note.isArchived,
-      }));
-    }
-  }, [fetchNoteData]);
+  // useEffect(() => {
+  //   if (fetchNoteData?.note) {
+  //     setNoteHeader(fetchNoteData.note.title || "");
+  //     setNoteContent(fetchNoteData.note.content || "");
+  //     setNoteAttributes((prev) => ({
+  //       ...prev,
+  //       isFavorite: fetchNoteData.note.isFavorite,
+  //       isArchived: fetchNoteData.note.isArchived,
+  //     }));
+  //   }
+  // }, [fetchNoteData]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -139,7 +150,7 @@ function ActiveNote() {
   useEffect(() => {
     if (!noteId || !noteHeader) return;
     const patchData: PatchNoteInterface = {
-      folderId: folderId ? folderId : "",
+      folderId: folderId ?? currentFolderId ?? "",
       title: noteHeader,
       content: noteContent,
       isFavorite: noteAttributes.isFavorite,
@@ -166,9 +177,6 @@ function ActiveNote() {
       isArchived: fetchNoteData.note.isArchived,
     });
   }
-
-  // if (isDeleted) return <RestoreNote />;
-  // if (!noteId) return <EmptyNote />;
 
   return (
     <div className="flex flex-col gap-8 p-12 w-full h-[1024px]">
