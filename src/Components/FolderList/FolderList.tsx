@@ -1,5 +1,5 @@
 import "../../index.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   useFolders,
   useApiRequest,
@@ -19,7 +19,11 @@ function FolderList() {
   const isFavoritesFolderList = location.pathname.includes("/favorites");
   const isTrashFolderList = location.pathname.includes("/trash");
   const isArchivesFolderList = location.pathname.includes("/archives");
-  const selectedNoteId = noteId;
+
+  const [notes, setNotes] = useState<NoteResponseInterface["notes"]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const {
     data: fetchNotesData,
@@ -28,79 +32,85 @@ function FolderList() {
     callApi: fetchNotes,
   } = useApiRequest<NoteResponseInterface>();
 
+  const loadNotes = async (reset = false) => {
+    if (loadingMore) return;
+    setLoadingMore(true);
+
+    const nextPage = reset ? 1 : page + 1;
+    setPage(nextPage);
+
+    let apiUrl = `/notes?page=${nextPage}&limit=10`;
+
+    if (isTrashFolderList) apiUrl += `&deleted=true`;
+    else if (folderId) apiUrl += `&folderId=${folderId}`;
+    else if (isFavoritesFolderList) apiUrl += `&favorite=true`;
+    else if (isArchivesFolderList) apiUrl += `&archived=true`;
+
+    const response = await fetchNotes(apiUrl, "GET");
+
+    if (response?.notes) {
+      setNotes(reset ? response.notes : [...notes, ...response.notes]);
+      setHasMore(response.notes.length > 0);
+    }
+
+    setLoadingMore(false);
+  };
+
   useEffect(() => {
-    (async () => {
-      let apiUrl = "";
-
-      if (isTrashFolderList) {
-        apiUrl = `/notes?deleted=${true}`;
-      } else if (folderId) {
-        apiUrl = `/notes?folderId=${folderId}`;
-      }else if(isFavoritesFolderList){
-        apiUrl=`/notes?favorite=${true}`;
-      }else if(isArchivesFolderList){
-        apiUrl=`/notes?archived=${true}`;
-      }
-
-      if (apiUrl) {
-        await fetchNotes(apiUrl, "GET");
-        console.log("Fetching notes:", apiUrl);
-      }
-    })();
-  }, [folderId, isArchived, isDeleted,isTrashFolderList,isFavoritesFolderList,isArchivesFolderList]);
+    setNotes([]);
+    setPage(1);
+    setHasMore(true);
+    loadNotes(true);
+  }, [folderId, isArchived, isDeleted, isTrashFolderList, isFavoritesFolderList, isArchivesFolderList]);
 
   return (
     <div className="folder-list-container">
       <span className="folder-list-heading">{selectedFolderName}</span>
 
       <div className="folder-list-subcontainer overflow-scroll hide-scrollbar">
-        {/* Show loading */}
-        {fetchNotesLoading && (
+        {fetchNotesLoading && notes.length === 0 && (
           <div className="theme-text-primary">Loading notes...</div>
         )}
 
-        {/* Show error message  */}
         {fetchNotesError && (
           <div className="theme-text-primary">
             Error loading notes. Please try again.
           </div>
         )}
 
-        {!fetchNotesLoading &&
-        !fetchNotesError &&
-        (fetchNotesData?.notes || []).length > 0
-          ? fetchNotesData?.notes.map((note) => (
+        {!fetchNotesLoading && !fetchNotesError && notes.length > 0
+          ? notes.map((note) => (
               <NavLink
                 key={`${note.id}-${note.deletedAt}`}
-                
-                to={isTrashFolderList?`notes/${note.id}/deleted`:`notes/${note.id}`}
+                to={isTrashFolderList ? `notes/${note.id}/deleted` : `notes/${note.id}`}
               >
                 <div
                   className={`note-container ${
-                    selectedNoteId === note.id
-                      ? "bg-white/10"
-                      : "bg-[rgba(255,255,255,0.03)]"
+                    noteId === note.id ? "bg-white/10" : "bg-[rgba(255,255,255,0.03)]"
                   }`}
                 >
                   <span className="note-container-heading">{note.title}</span>
                   <div className="flex gap-[10px]">
-                    <span className="note-date">
-                      {customDate(new Date(note.updatedAt))}
-                    </span>
+                    <span className="note-date">{customDate(new Date(note.updatedAt))}</span>
                     <span className="note-preview">
-                      {note.preview.length > 20
-                        ? `${note.preview.slice(0, 20)}...`
-                        : note.preview}
+                      {note.preview.length > 20 ? `${note.preview.slice(0, 20)}...` : note.preview}
                     </span>
                   </div>
                 </div>
               </NavLink>
             ))
-          : //no notes are found
-            !fetchNotesLoading &&
-            !fetchNotesError && (
+          : !fetchNotesLoading && !fetchNotesError && (
               <div className="text-gray-400 p-2">No notes available</div>
             )}
+
+        {hasMore && !fetchNotesLoading && (
+          <button
+            onClick={() => loadNotes()}
+            className="load-more-btn mt-4 p-2 text-white bg-blue-600 hover:bg-blue-700 rounded-md w-full"
+          >
+            {loadingMore ? "Loading..." : "Load More"}
+          </button>
+        )}
       </div>
     </div>
   );
