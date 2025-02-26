@@ -9,6 +9,8 @@
   .theme-text-secondary { @apply text-white/60; }
   .theme-bg-primary { @apply bg-[#1C1C1C]; }
   .theme-bg-secondary { @apply bg-[#312EB5]; }
+  .theme-bg-dark {@apply bg-[#181818]}
+  .theme-bg-faded {@apply bg-white/5}
 
   /* Typography */
   .theme-font { @apply font-[Source_Sans_Pro]; }

@@ -64,10 +64,30 @@ function FolderList() {
   };
 
   useEffect(() => {
+    // if (isTrashFolderList) {
+    //   setSelectedFolderName("Trash");
+    // } else if (isFavoritesFolderList) {
+    //   setSelectedFolderName("Favorites");
+    // } else if (isArchivesFolderList) {
+    //   setSelectedFolderName("Archives");
+    // }       
+
     setNotes([]);
     setPage(1);
 
     loadNotes(true);
+
+    // if (isTrashFolderList) {
+    //   setSelectedFolderName("Trash");
+    // } else if (isFavoritesFolderList) {
+    //   setSelectedFolderName("Favorites");
+    // } else if (isArchivesFolderList) {
+    //   setSelectedFolderName("Archives");
+    // }else if(notes.length > 0){
+    //  if(folderId){
+        
+    //   }
+    // }
   }, [
     folderId,
     isArchived,

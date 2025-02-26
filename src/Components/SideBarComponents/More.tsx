@@ -13,7 +13,7 @@ function More() {
       <NavLink to={"/favorites"} key={"favorites"}>
         <div
           className={`flex flex-col gap-1 w-full h-full transition rounded-md 
-          ${isFavoritesFolderList ? "bg-white/5" : "hover:bg-white/5"}`}
+          ${isFavoritesFolderList ? "theme-bg-faded" : "hover:theme-bg-faded"}`}
         >
           <div className="file-item">
             <img
@@ -29,7 +29,7 @@ function More() {
       <NavLink to={`/trash`} key={"trash"}>
         <div
           className={`flex flex-col gap-1 w-full h-full transition rounded-md 
-          ${isTrashFolderList ? "bg-white/5" : "hover:bg-white/5"}`}
+          ${isTrashFolderList ? "theme-bg-faded" : "hover:theme-bg-faded"}`}
         >
           <div className="file-item">
             <img
@@ -45,7 +45,7 @@ function More() {
       <NavLink to={"/archives"} key={"archives"}>
         <div
           className={`flex flex-col gap-1 w-full h-full transition rounded-md 
-          ${isArchivesFolderList ? "bg-white/5" : "hover:bg-white/5"}`}
+          ${isArchivesFolderList ? "theme-bg-faded" : "hover:theme-bg-faded"}`}
         >
           <div className="file-item">
             <img

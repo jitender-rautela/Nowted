@@ -258,7 +258,7 @@ function ActiveNote() {
           {/* Note Header */}
           <div className="flex justify-between w-full h-[40px]">
             <textarea
-              className="font-semibold text-2xl text-white bg-transparent outline-none resize-none overflow-hidden w-full"
+              className="font-semibold text-2xl theme-text-primary bg-transparent outline-none resize-none overflow-hidden w-full"
               value={noteHeader}
               onChange={handleNoteHeader}
             />
@@ -285,7 +285,7 @@ function ActiveNote() {
                         }
                         alt="favorite_icon"
                       />
-                      <span className="text-white text-[16px] hover:text-white/70">
+                      <span className="theme-text-primary text-[16px] hover:text-white/70">
                         {noteAttributes.isFavorite
                           ? "Remove from Favorite"
                           : "Add to Favorite"}
@@ -304,7 +304,7 @@ function ActiveNote() {
                         }
                         alt="archived_icon"
                       />
-                      <span className="text-white text-[16px] hover:text-white/70">
+                      <span className="theme-text-primary text-[16px] hover:text-white/70">
                         {noteAttributes.isArchived
                           ? "Remove from Archive"
                           : "Archive"}
@@ -318,7 +318,7 @@ function ActiveNote() {
                       onClick={handleDelete}
                     >
                       <img src="../src/assets/trash.svg" alt="trash_icon" />
-                      <span className="text-white text-[16px] hover:text-white/70">
+                      <span className="theme-text-primary text-[16px] hover:text-white/70">
                         Delete
                       </span>
                     </div>
@@ -365,7 +365,7 @@ function ActiveNote() {
 
               {/* Change folder */}
               {showChangeFolderOptions && (
-                <div className="absolute h-[155px] top-full left-0 mt-2 w-40 bg-[#1C1C1C] theme-text-primary p-2 rounded  z-20 overflow-scroll hide-scrollbar flex flex-col gap-1">
+                <div className="absolute h-[155px] top-full left-0 mt-2 w-40 theme-bg-primary theme-text-primary p-2 rounded  z-20 overflow-scroll hide-scrollbar flex flex-col gap-1">
                   {fetchFoldersLoading && (
                     <p className="theme-text-primary">Loading...</p>
                   )}

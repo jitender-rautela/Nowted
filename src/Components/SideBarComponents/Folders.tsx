@@ -17,7 +17,7 @@ function Folders() {
   const [folderName, setFolderName] = useState("My New Folder");
   const [newFolderName, setNewFolderName] = useState("");
   const [renamingFolderId, setRenamingFolderId] = useState<string | null>(null);
-  const istrashFolderList = location.pathname.includes("/trash");
+  const isTrashFolderList = location.pathname.includes("/trash");
   const isFavoritesFolderList = location.pathname.includes("/favorites");
   const isArchivesFolderList = location.pathname.includes("/archives");
 
@@ -109,7 +109,7 @@ function Folders() {
 
   // Relocate to first folder by default
   useEffect(() => {
-    if (istrashFolderList) {
+    if (isTrashFolderList) {
       setSelectedFolderName("Trash");
       return;
     } else if (isFavoritesFolderList) {
@@ -118,7 +118,8 @@ function Folders() {
     } else if (isArchivesFolderList) {
       setSelectedFolderName("Archives");
       return;
-    }
+    }  
+  
 
     if (fetchFolderData?.folders && fetchFolderData.folders.length > 0) {
       if (!folderId) {
@@ -161,15 +162,15 @@ function Folders() {
               type="text"
               value={folderName}
               autoFocus
-              className="w-[166px] h-[22px] border border-white/40 p-1 font-semibold text-white text-[16px] leading-[20.11px] tracking-normal outline-none focus:border-none bg-transparent"
+              className="w-[166px] h-[22px] border border-white/40 p-1 font-semibold theme-text-primary text-[16px] leading-[20.11px] tracking-normal outline-none focus:border-none bg-transparent"
               onChange={(e) => setFolderName(e.target.value)}
               onKeyDown={handleEnter}
               onBlur={handleEnter}
             />
           </div>
         )}
-        {fetchFolderLoading && <p className="text-white">Loading....</p>}
-        {fetchFolderError && <p className="text-white">Error Loading data</p>}
+        {fetchFolderLoading && <p className="theme-text-primary">Loading....</p>}
+        {fetchFolderError && <p className="theme-text-primary">Error Loading data</p>}
 
         {fetchFolderData?.folders?.map((folder) => (
           <div
@@ -211,7 +212,7 @@ function Folders() {
                     type="text"
                     value={newFolderName}
                     autoFocus
-                    className="w-[166px] h-[22px] border border-white/40 p-1 font-semibold text-white text-[16px] leading-[20.11px] tracking-normal outline-none focus:border-white bg-white/5"
+                    className="w-[166px] h-[22px] border border-white/40 p-1 font-semibold theme-text-primary text-[16px] leading-[20.11px] tracking-normal outline-none focus:border-white bg-white/5"
                     onChange={(e) => setNewFolderName(e.target.value)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") handleRename(folder.id);
@@ -222,7 +223,7 @@ function Folders() {
                   <span
                     className={`file-text ${
                       folder.id === folderId
-                        ? "text-white"
+                        ? "theme-text-primary"
                         : "group-hover:text-white"
                     }`}
                   >
