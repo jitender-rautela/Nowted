@@ -1,12 +1,11 @@
-import { ToastContainer} from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import Layout from "./layout/Layout.tsx";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-
 
 function App() {
   return (
     <Router>
-      <ToastContainer />
+      <ToastContainer autoClose={2000} theme="dark" />
       <Routes>
         <Route path="/" element={<Layout />} />
 

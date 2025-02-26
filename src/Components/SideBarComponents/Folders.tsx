@@ -44,6 +44,12 @@ function Folders() {
       | React.FocusEvent<HTMLInputElement>
   ) => {
     if ("key" in e && e.key !== "Enter") return;
+    
+    if (folderName === "") {
+      toast.error("Missing folder name");
+      return;
+    }
+
     setAddFolder(false);
 
     const response = await createFolder("/folders", "POST", {
@@ -72,7 +78,11 @@ function Folders() {
   };
 
   const handleRename = async (id: string) => {
-    if (!newFolderName.trim()) return;
+    if (!newFolderName.trim()) {
+      toast.error("Folder Name is Empty");
+      return;
+    }
+
     const response = await patchFolder(`/folders/${id}`, "PATCH", {
       name: newFolderName,
     });
@@ -91,8 +101,8 @@ function Folders() {
     if (addFolder) return;
     (async () => {
       const response = await fetchFolders("/folders", "GET", {});
-      if(!response){
-        toast.error(fetchFolderError?.error||fetchFolderError?.message)
+      if (!response) {
+        toast.error(fetchFolderError?.error || fetchFolderError?.message);
       }
     })();
   }, [addFolder]);

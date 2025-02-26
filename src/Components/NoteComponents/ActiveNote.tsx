@@ -94,6 +94,10 @@ function ActiveNote() {
       if (debounceRef.current) clearTimeout(debounceRef.current);
 
       debounceRef.current = setTimeout(async () => {
+        if(title === ""){
+          toast.error("Note Heading can't be Empty");
+          return;
+        }
         const patchData: PatchNoteInterface = {
           folderId: folderId ?? currentFolderId ?? "",
           title,
