@@ -7,6 +7,7 @@ import {
   NavLink,
   useParams,  
 } from "../../index.tsx";
+import RecentsSkeleton from "../SkeletonLoaders/RecentsSkeleton.tsx";
 
 function Recents() {
   const { noteId,} = useParams();
@@ -29,7 +30,7 @@ function Recents() {
       <span className="sidebar-heading">Recents</span>
       <div className="flex flex-col gap-1 w-full h-full">
         {/* Loading State */}
-        {recentNotesLoading && <p className="theme-text-primary">Loading...</p>}
+        {recentNotesLoading && <RecentsSkeleton/>}
 
         {/* Error State */}
         {recentNotesError && (

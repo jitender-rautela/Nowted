@@ -10,6 +10,7 @@ import {
   FoldersResponseInterface,
 } from "../../index.tsx";
 import { toast } from "react-toastify";
+import ActiveNoteSkelaton from "../SkeletonLoaders/ActiveNoteSkeleton.tsx";
 
 function ActiveNote() {
   const navigate = useNavigate();
@@ -39,9 +40,7 @@ function ActiveNote() {
   const { error: patchNoteError, callApi: patchNoteData } =
     useApiRequest<string>();
 
-  const {
-    callApi: deleteNote,
-  } = useApiRequest<string>();
+  const { callApi: deleteNote } = useApiRequest<string>();
 
   const {
     data: fetchFoldersData,
@@ -94,7 +93,7 @@ function ActiveNote() {
       if (debounceRef.current) clearTimeout(debounceRef.current);
 
       debounceRef.current = setTimeout(async () => {
-        if(title === ""){
+        if (title === "") {
           toast.error("Note Heading can't be Empty");
           return;
         }
@@ -134,7 +133,7 @@ function ActiveNote() {
 
     if (!response) {
       toast.error("Request failed");
-    }else{
+    } else {
       toast.success(response);
     }
 
@@ -161,8 +160,8 @@ function ActiveNote() {
       } else {
         navigate(`/folders/${currentFolderId}/notes/${noteId}/archived`);
       }
-    }else{
-      toast.error("Note update Failed")
+    } else {
+      toast.error("Note update Failed");
     }
   };
 
@@ -250,14 +249,14 @@ function ActiveNote() {
   }
 
   return (
-    <div className="flex flex-col gap-8 p-12 w-full h-[1024px]">
+    <div className="flex flex-col gap-8 p-12 w-full h-[1024px]  pr-8 pl-8">
       {/* Note Header */}
       {fetchNoteLoading ? (
-        <p className="text-white">Loading note...</p>
+        <ActiveNoteSkelaton />
       ) : fetchNoteData?.note ? (
         <>
           {/* Note Header */}
-          <div className="flex justify-between w-[690px] h-[40px]">
+          <div className="flex justify-between w-full h-[40px]">
             <textarea
               className="font-semibold text-2xl text-white bg-transparent outline-none resize-none overflow-hidden w-full"
               value={noteHeader}
@@ -330,7 +329,7 @@ function ActiveNote() {
           </div>
 
           {/* Note Body */}
-          <div className="w-[690px] flex flex-col gap-4">
+          <div className="w-full flex flex-col gap-4">
             <div className="flex gap-6">
               <div className="flex gap-4 items-center">
                 <img src="../src/assets/calender.svg" alt="Calendar" />
@@ -396,7 +395,7 @@ function ActiveNote() {
 
           <div>
             <textarea
-              className="w-[690px] h-[700px] theme-text-primary text-base leading-[28px] overflow-scroll hide-scrollbar bg-transparent outline-none resize-none text-justify"
+              className="w-full h-[700px] theme-text-primary text-base leading-[28px] overflow-scroll hide-scrollbar bg-transparent outline-none resize-none text-justify"
               value={noteContent}
               onChange={handleNoteContent}
             />

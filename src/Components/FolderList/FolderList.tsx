@@ -10,7 +10,7 @@ import {
   customDate,
 } from "../../index.tsx";
 import { toast } from "react-toastify";
-
+import FolderListSkelaton from "../SkeletonLoaders/FolderListSkeleton.tsx";
 function FolderList() {
   const location = useLocation();
   const { noteId, folderId } = useParams();
@@ -48,8 +48,12 @@ function FolderList() {
 
     const response = await fetchNotes(apiUrl, "GET");
 
-    if(!response){
-      toast.error(fetchNotesError?.error||fetchNotesError?.message||"Failed Fetching Notes");
+    if (!response) {
+      toast.error(
+        fetchNotesError?.error ||
+          fetchNotesError?.message ||
+          "Failed Fetching Notes"
+      );
     }
     if (response?.notes) {
       setNotes(reset ? response.notes : [...notes, ...response.notes]);
@@ -64,58 +68,77 @@ function FolderList() {
     setPage(1);
 
     loadNotes(true);
-  }, [folderId, isArchived, isDeleted, isTrashFolderList, isFavoritesFolderList, isArchivesFolderList]);
+  }, [
+    folderId,
+    isArchived,
+    isDeleted,
+    isTrashFolderList,
+    isFavoritesFolderList,
+    isArchivesFolderList,
+  ]);
 
   return (
-    <div className="folder-list-container">
-      <span className="folder-list-heading">{selectedFolderName}</span>
+    <>
+      <div className="folder-list-container">
+        <span className="folder-list-heading">{selectedFolderName}</span>
 
-      <div className="folder-list-subcontainer overflow-scroll hide-scrollbar">
-        {fetchNotesLoading && notes.length === 0 && (
-          <div className="theme-text-primary">Loading notes...</div>
-        )}
+        <div className="folder-list-subcontainer overflow-scroll hide-scrollbar">
+          {fetchNotesError && (
+            <div className="theme-text-primary">
+              Error loading notes. Please try again.
+            </div>
+          )}
+          {fetchNotesLoading && <FolderListSkelaton />}
 
-        {fetchNotesError && (
-          <div className="theme-text-primary">
-            Error loading notes. Please try again.
-          </div>
-        )}
-
-        {!fetchNotesLoading && !fetchNotesError && notes.length > 0
-          ? notes.map((note) => (
-              <NavLink
-                key={`${note.id}-${note.deletedAt}`}
-                to={isTrashFolderList ? `notes/${note.id}/deleted` : `notes/${note.id}`}
-              >
-                <div
-                  className={`note-container ${
-                    noteId === note.id ? "bg-white/10" : "bg-[rgba(255,255,255,0.03)]"
-                  }`}
+          {!fetchNotesLoading && !fetchNotesError && notes.length > 0
+            ? notes.map((note) => (
+                <NavLink
+                  key={`${note.id}-${note.deletedAt}`}
+                  to={
+                    isTrashFolderList
+                      ? `notes/${note.id}/deleted`
+                      : `notes/${note.id}`
+                  }
                 >
-                  <span className="note-container-heading">{note.title}</span>
-                  <div className="flex gap-[10px]">
-                    <span className="note-date">{customDate(new Date(note.updatedAt))}</span>
-                    <span className="note-preview">
-                      {note.preview.length > 20 ? `${note.preview.slice(0, 20)}...` : note.preview}
-                    </span>
+                  <div
+                    className={`note-container ${
+                      noteId === note.id
+                        ? "bg-white/10"
+                        : "bg-[rgba(255,255,255,0.03)]"
+                    }`}
+                  >
+                    <span className="note-container-heading">{note.title}</span>
+                    <div className="flex gap-[10px]">
+                      <span className="note-date">
+                        {customDate(new Date(note.updatedAt))}
+                      </span>
+                      <span className="note-preview">
+                        {note.preview
+                          ? note.preview.length > 20
+                            ? `${note.preview.slice(0, 20)}...`
+                            : note.preview
+                          : "No preview available"}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </NavLink>
-            ))
-          : !fetchNotesLoading && !fetchNotesError && (
-              <div className="text-gray-400 p-2">No notes available</div>
-            )}
+                </NavLink>
+              ))
+            : !fetchNotesLoading &&
+              !fetchNotesError && (
+                <div className="text-gray-400 p-2">No notes available</div>
+              )}
 
-        {hasMore && !fetchNotesLoading && (
-          <button
-            onClick={() => loadNotes()}
-            className="load-more-btn mt-4 p-2 text-white bg-blue-600 hover:bg-blue-700 rounded-md w-full"
-          >
-            {loadingMore ? "Loading..." : "Load More"}
-          </button>
-        )}
+          {hasMore && !fetchNotesLoading && (
+            <button
+              onClick={() => loadNotes()}
+              className="load-more-btn mt-4 p-2 text-white bg-blue-600 hover:bg-blue-700 rounded-md w-full"
+            >
+              {loadingMore ? "Loading..." : "Load More"}
+            </button>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
