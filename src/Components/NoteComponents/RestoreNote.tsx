@@ -3,16 +3,22 @@ import "../../index.css";
 import useApiRequest from "../../hooks/useApiRequest";
 import { useEffect, useState } from "react";
 import { NoteIdResponseInterface } from "../../interface/Interface";
+import { toast } from "react-toastify";
 
 function RestoreNote() {
   const { noteId, folderId } = useParams();
  const [currentFolderId, setCurrentFolderId] = useState(folderId);
 
-  const { callApi: patchRestoreNote } = useApiRequest();
+  const { callApi: patchRestoreNote } = useApiRequest<string>();
   const {callApi: fetchNote} = useApiRequest<NoteIdResponseInterface>();
 
   const handleRestore = async () => {
-    await patchRestoreNote(`/notes/${noteId}/restore`, "POST");
+    const response = await patchRestoreNote(`/notes/${noteId}/restore`, "POST");
+    if(response){
+      toast.success(response);
+    }else{
+      toast.error("Restoring Failed")
+    }
   };
 
   useEffect(()=>{

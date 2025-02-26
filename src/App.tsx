@@ -1,9 +1,12 @@
+import { ToastContainer} from "react-toastify";
 import Layout from "./layout/Layout.tsx";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+
 
 function App() {
   return (
     <Router>
+      <ToastContainer />
       <Routes>
         <Route path="/" element={<Layout />} />
 

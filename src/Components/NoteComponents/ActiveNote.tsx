@@ -9,6 +9,7 @@ import {
   customDate,
   FoldersResponseInterface,
 } from "../../index.tsx";
+import { toast } from "react-toastify";
 
 function ActiveNote() {
   const navigate = useNavigate();
@@ -30,15 +31,15 @@ function ActiveNote() {
   const optionsRef = useRef<HTMLDivElement | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const { data: fetchNoteData, callApi: fetchNote } =
-    useApiRequest<NoteIdResponseInterface>();
+  const {
+    data: fetchNoteData,
+    loading: fetchNoteLoading,
+    callApi: fetchNote,
+  } = useApiRequest<NoteIdResponseInterface>();
   const { error: patchNoteError, callApi: patchNoteData } =
     useApiRequest<string>();
 
   const {
-    error: deleteNoteError,
-    loading: deleteNoteLoading,
-    data: deleteNoteData,
     callApi: deleteNote,
   } = useApiRequest<string>();
 
@@ -100,7 +101,16 @@ function ActiveNote() {
           isFavorite: noteAttributes.isFavorite,
           isArchived: noteAttributes.isArchived,
         };
-        await patchNoteData(`/notes/${noteId}`, "PATCH", patchData);
+        const response = await patchNoteData(
+          `/notes/${noteId}`,
+          "PATCH",
+          patchData
+        );
+        if (response) {
+          toast.success(response);
+        } else {
+          toast.error("Note update Failed");
+        }
         console.log("Auto-saving...");
       }, 500);
     },
@@ -117,6 +127,12 @@ function ActiveNote() {
       folderId,
       ...updatedAttributes,
     });
+
+    if (!response) {
+      toast.error("Request failed");
+    }else{
+      toast.success(response);
+    }
 
     if (response && isFavoritesFolderList) {
       navigate(`/favorites`);
@@ -135,25 +151,33 @@ function ActiveNote() {
     });
 
     if (response) {
-
-      if(isFavoritesFolderList){
+      toast.success(response);
+      if (isFavoritesFolderList) {
         navigate("/favorites");
-      }else if(isArchivesFolderList){
-        navigate(`/folders/${currentFolderId}/notes/${noteId}`)
-
-      }else{
+      } else {
         navigate(`/folders/${currentFolderId}/notes/${noteId}/archived`);
       }
+    }else{
+      toast.error("Note update Failed")
     }
   };
 
   const handleDelete = () => {
     (async () => {
       const response = await deleteNote(`/notes/${noteId}`, "DELETE");
+      setshowNoteOptions(false);
 
       if (response) {
-        setshowNoteOptions(false);
-        navigate(`/folders/${folderId}/notes/${noteId}/deleted`);
+        if (isFavoritesFolderList) {
+          navigate("/favorites");
+        } else if (isArchivesFolderList) {
+          navigate("/archives");
+        } else {
+          navigate(`/folders/${folderId}/notes/${noteId}/deleted`);
+        }
+        toast.success("Note deleted successfully");
+      } else {
+        toast.error("Request Failed");
       }
     })();
   };
@@ -170,11 +194,14 @@ function ActiveNote() {
     const response = await changeFolder(`/notes/${noteId}`, "PATCH", {
       folderId: changeFolderId,
     });
+    setShowChangeFolderOptions((prev) => !prev);
 
     if (response) {
-      setShowChangeFolderOptions((prev) => !prev);
+      toast.success(response);
       navigate(`/folders/${changeFolderId}/notes/${noteId}`);
       setCurrentFolderName(changeFolderName);
+    } else {
+      toast.error("Note update failed");
     }
   };
 
@@ -184,7 +211,13 @@ function ActiveNote() {
     (async () => {
       const response = await fetchNote(`/notes/${noteId}`, "GET");
 
-      if (response?.note) {
+      if (!response) {
+        toast.error("Note not found");
+      } else if (response?.note) {
+        if (response?.note.deletedAt) {
+          navigate(`/trash/notes/${noteId}/deleted`);
+        }
+
         setCurrentFolderId(response?.note?.folder.id);
         setCurrentFolderName(response.note.folder.name);
 
@@ -195,12 +228,7 @@ function ActiveNote() {
           isFavorite: response.note.isFavorite,
           isArchived: response.note.isArchived,
         }));
-
-        if (response?.note.deletedAt) {
-          navigate(`/trash/notes/${noteId}/deleted`);
-        }
       }
-      console.log("Note loaded..");
     })();
   }, [noteId]);
 
@@ -220,141 +248,159 @@ function ActiveNote() {
   return (
     <div className="flex flex-col gap-8 p-12 w-full h-[1024px]">
       {/* Note Header */}
-      <div className="flex justify-between w-[690px] h-[40px]">
-        <textarea
-          className="font-semibold text-2xl text-white bg-transparent outline-none resize-none overflow-hidden w-full"
-          value={noteHeader}
-          onChange={handleNoteHeader}
-        />
-        <div className="relative">
-          <img
-            className="w-8 h-8 cursor-pointer"
-            src="../src/assets/note-option.svg"
-            alt="Options"
-            onClick={handleNoteOption}
-          />
-          {/* Note Options */}
-          <div ref={optionsRef} className="absolute right-0 top-10 z-50">
-            {showNoteOptions && (
-              <div className="w-[220px] h-[165px] rounded-md p-[15px] flex flex-col gap-[20px] bg-[#333333]">
-                <div
-                  className="flex gap-[15px] cursor-pointer"
-                  onClick={toggleFavorite}
-                >
-                  <img
-                    src={
-                      noteAttributes.isFavorite
-                        ? "../src/assets/favorite-fill.svg"
-                        : "../src/assets/favorites.svg"
-                    }
-                    alt="favorite_icon"
-                  />
-                  <span className="text-white text-[16px] hover:text-white/70">
-                    {noteAttributes.isFavorite
-                      ? "Remove from Favorite"
-                      : "Add to Favorite"}
-                  </span>
-                </div>
+      {fetchNoteLoading ? (
+        <p className="text-white">Loading note...</p>
+      ) : fetchNoteData?.note ? (
+        <>
+          {/* Note Header */}
+          <div className="flex justify-between w-[690px] h-[40px]">
+            <textarea
+              className="font-semibold text-2xl text-white bg-transparent outline-none resize-none overflow-hidden w-full"
+              value={noteHeader}
+              onChange={handleNoteHeader}
+            />
+            <div className="relative">
+              <img
+                className="w-8 h-8 cursor-pointer"
+                src="../src/assets/note-option.svg"
+                alt="Options"
+                onClick={handleNoteOption}
+              />
+              {/* Note Options */}
+              <div ref={optionsRef} className="absolute right-0 top-10 z-50">
+                {showNoteOptions && (
+                  <div className="w-[220px] h-[165px] rounded-md p-[15px] flex flex-col gap-[20px] bg-[#333333]">
+                    <div
+                      className="flex gap-[15px] cursor-pointer"
+                      onClick={toggleFavorite}
+                    >
+                      <img
+                        src={
+                          noteAttributes.isFavorite
+                            ? "../src/assets/favorite-fill.svg"
+                            : "../src/assets/favorites.svg"
+                        }
+                        alt="favorite_icon"
+                      />
+                      <span className="text-white text-[16px] hover:text-white/70">
+                        {noteAttributes.isFavorite
+                          ? "Remove from Favorite"
+                          : "Add to Favorite"}
+                      </span>
+                    </div>
 
-                <div
-                  className="flex gap-[15px] cursor-pointer"
-                  onClick={toggleArchive}
-                >
-                  <img
-                    src={
-                      noteAttributes.isArchived
-                        ? "../src/assets/archived-fill.svg"
-                        : "../src/assets/archived.svg"
-                    }
-                    alt="archived_icon"
-                  />
-                  <span className="text-white text-[16px] hover:text-white/70">
-                    {noteAttributes.isArchived
-                      ? "Remove from Archive"
-                      : "Archive"}
-                  </span>
-                </div>
+                    <div
+                      className="flex gap-[15px] cursor-pointer"
+                      onClick={toggleArchive}
+                    >
+                      <img
+                        src={
+                          noteAttributes.isArchived
+                            ? "../src/assets/archived-fill.svg"
+                            : "../src/assets/archived.svg"
+                        }
+                        alt="archived_icon"
+                      />
+                      <span className="text-white text-[16px] hover:text-white/70">
+                        {noteAttributes.isArchived
+                          ? "Remove from Archive"
+                          : "Archive"}
+                      </span>
+                    </div>
 
-                <hr className="h-[1px] bg-white/50 border-none" />
+                    <hr className="h-[1px] bg-white/50 border-none" />
 
-                <div
-                  className="flex gap-[15px] cursor-pointer"
-                  onClick={handleDelete}
-                >
-                  <img src="../src/assets/trash.svg" alt="trash_icon" />
-                  <span className="text-white text-[16px] hover:text-white/70">
-                    Delete
-                  </span>
-                </div>
+                    <div
+                      className="flex gap-[15px] cursor-pointer"
+                      onClick={handleDelete}
+                    >
+                      <img src="../src/assets/trash.svg" alt="trash_icon" />
+                      <span className="text-white text-[16px] hover:text-white/70">
+                        Delete
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Note Body */}
-      <div className="w-[690px] flex flex-col gap-4">
-        <div className="flex gap-6">
-          <div className="flex gap-4 items-center">
-            <img src="../src/assets/calender.svg" alt="Calendar" />
-            <span className="theme-text-secondary text-sm">Date</span>
-          </div>
-          {fetchNoteData?.note?.updatedAt && (
-            <span className="theme-text-primary text-sm">
-              {customDate(new Date(fetchNoteData.note.updatedAt))}
-            </span>
-          )}
-        </div>
-        <hr />
-        <div className="flex gap-6 relative">
-          <div className="flex gap-4 items-center">
-            <img src="../src/assets/folder-close.svg" alt="Folder" />
-            <span className="theme-text-secondary text-sm">Folder</span>
-          </div>
-
-          <span
-  className={`theme-text-primary text-sm relative z-10 cursor-pointer ${
-    isFavoritesFolderList || isArchivesFolderList 
-      ? "pointer-events-none opacity-50 no-underline" 
-      : "underline decoration-white decoration-1"
-  }`}
-  onClick={!isFavoritesFolderList && !isArchivesFolderList ? handleFolderOptions : undefined}
->
-            {currentFolderName}
-          </span>
-          {/* Change folder */}
-          {showChangeFolderOptions && (
-            <div className="absolute h-[155px] top-full left-0 mt-2 w-40 bg-[#1C1C1C] theme-text-primary p-2 rounded  z-20 overflow-scroll hide-scrollbar flex flex-col gap-1">
-              {fetchFoldersLoading && (
-                <p className="theme-text-primary">Loading...</p>
-              )}
-              {fetchFoldersError && (
-                <p className="theme-text-primary">Error Loading Folders...</p>
-              )}
-
-              {fetchFoldersData?.folders.map((folder) => {
-                return (
-                  <span
-                    className="theme-text-primary text-[14px] rounded-sm cursor-pointer p-1 hover:bg-white/30"
-                    key={folder.id}
-                    onClick={() => handleFolderChanage(folder.id, folder.name)}
-                  >
-                    {folder.name}
-                  </span>
-                );
-              })}
             </div>
-          )}
-        </div>
-      </div>
+          </div>
 
-      <div>
-        <textarea
-          className="w-[690px] h-[700px] theme-text-primary text-base leading-[28px] overflow-scroll hide-scrollbar bg-transparent outline-none resize-none text-justify"
-          value={noteContent}
-          onChange={handleNoteContent}
-        />
-      </div>
+          {/* Note Body */}
+          <div className="w-[690px] flex flex-col gap-4">
+            <div className="flex gap-6">
+              <div className="flex gap-4 items-center">
+                <img src="../src/assets/calender.svg" alt="Calendar" />
+                <span className="theme-text-secondary text-sm">Date</span>
+              </div>
+              {fetchNoteData?.note?.updatedAt && (
+                <span className="theme-text-primary text-sm">
+                  {customDate(new Date(fetchNoteData.note.updatedAt))}
+                </span>
+              )}
+            </div>
+            <hr />
+            <div className="flex gap-6 relative">
+              <div className="flex gap-4 items-center">
+                <img src="../src/assets/folder-close.svg" alt="Folder" />
+                <span className="theme-text-secondary text-sm">Folder</span>
+              </div>
+
+              <span
+                className={`theme-text-primary text-sm relative z-10 cursor-pointer ${
+                  isFavoritesFolderList || isArchivesFolderList
+                    ? "pointer-events-none opacity-50 no-underline"
+                    : "underline decoration-white decoration-1"
+                }`}
+                onClick={
+                  !isFavoritesFolderList && !isArchivesFolderList
+                    ? handleFolderOptions
+                    : undefined
+                }
+              >
+                {currentFolderName}
+              </span>
+
+              {/* Change folder */}
+              {showChangeFolderOptions && (
+                <div className="absolute h-[155px] top-full left-0 mt-2 w-40 bg-[#1C1C1C] theme-text-primary p-2 rounded  z-20 overflow-scroll hide-scrollbar flex flex-col gap-1">
+                  {fetchFoldersLoading && (
+                    <p className="theme-text-primary">Loading...</p>
+                  )}
+                  {fetchFoldersError && (
+                    <p className="theme-text-primary">
+                      Error Loading Folders...
+                    </p>
+                  )}
+
+                  {fetchFoldersData?.folders.map((folder) => {
+                    return (
+                      <span
+                        className="theme-text-primary text-[14px] rounded-sm cursor-pointer p-1 hover:bg-white/30"
+                        key={folder.id}
+                        onClick={() =>
+                          handleFolderChanage(folder.id, folder.name)
+                        }
+                      >
+                        {folder.name}
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <textarea
+              className="w-[690px] h-[700px] theme-text-primary text-base leading-[28px] overflow-scroll hide-scrollbar bg-transparent outline-none resize-none text-justify"
+              value={noteContent}
+              onChange={handleNoteContent}
+            />
+          </div>
+        </>
+      ) : (
+        <p className="text-white">Error loading note...</p>
+      )}
     </div>
   );
 }

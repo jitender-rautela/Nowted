@@ -9,6 +9,7 @@ import {
   NoteResponseInterface,
   customDate,
 } from "../../index.tsx";
+import { toast } from "react-toastify";
 
 function FolderList() {
   const location = useLocation();
@@ -22,11 +23,10 @@ function FolderList() {
 
   const [notes, setNotes] = useState<NoteResponseInterface["notes"]>([]);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
 
   const {
-    data: fetchNotesData,
     loading: fetchNotesLoading,
     error: fetchNotesError,
     callApi: fetchNotes,
@@ -48,9 +48,12 @@ function FolderList() {
 
     const response = await fetchNotes(apiUrl, "GET");
 
+    if(!response){
+      toast.error(fetchNotesError?.error||fetchNotesError?.message||"Failed Fetching Notes");
+    }
     if (response?.notes) {
       setNotes(reset ? response.notes : [...notes, ...response.notes]);
-      setHasMore(response.notes.length > 0);
+      setHasMore(response.notes.length === 10);
     }
 
     setLoadingMore(false);
@@ -59,7 +62,7 @@ function FolderList() {
   useEffect(() => {
     setNotes([]);
     setPage(1);
-    setHasMore(true);
+
     loadNotes(true);
   }, [folderId, isArchived, isDeleted, isTrashFolderList, isFavoritesFolderList, isArchivesFolderList]);
 

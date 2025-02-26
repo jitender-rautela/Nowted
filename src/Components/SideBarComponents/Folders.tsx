@@ -1,5 +1,8 @@
 import "../../index.css";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import {
   useFolders,
   useApiRequest,
@@ -9,22 +12,22 @@ import {
   FoldersResponseInterface,
 } from "../../index.tsx";
 
-
 function Folders() {
   const [addFolder, setAddFolder] = useState(false);
   const [folderName, setFolderName] = useState("My New Folder");
   const [newFolderName, setNewFolderName] = useState("");
   const [renamingFolderId, setRenamingFolderId] = useState<string | null>(null);
-  const istrashFolderList = location.pathname.includes("/trash"); 
+  const istrashFolderList = location.pathname.includes("/trash");
   const isFavoritesFolderList = location.pathname.includes("/favorites");
-  const isArchivesFolderList = location.pathname.includes("/archives"); 
+  const isArchivesFolderList = location.pathname.includes("/archives");
 
   const { setSelectedFolderName } = useFolders();
   const { folderId } = useParams();
   const navigate = useNavigate();
 
-  const { callApi: createFolder } = useApiRequest();
-  const { callApi: patchFolder } = useApiRequest();
+  const { error: createFolderError, callApi: createFolder } =
+    useApiRequest<string>();
+  const { callApi: patchFolder } = useApiRequest<string>();
   const {
     data: fetchFolderData,
     loading: fetchFolderLoading,
@@ -41,49 +44,69 @@ function Folders() {
       | React.FocusEvent<HTMLInputElement>
   ) => {
     if ("key" in e && e.key !== "Enter") return;
-
-    await createFolder("/folders", "POST", { name: folderName });
-    await fetchFolders("/folders", "GET", {});
-    console.log("folder created..");
-
     setAddFolder(false);
+
+    const response = await createFolder("/folders", "POST", {
+      name: folderName,
+    });
+
+    if (response) {
+      await fetchFolders("/folders", "GET", {});
+      toast.success(response);
+      setFolderName("My New Folder");
+    } else {
+      toast.error(createFolderError?.message || "Failed to create folder.");
+    }
   };
 
   const handleDelete = async (id: string) => {
-    await patchFolder(`/folders/${id}`, "DELETE");
-    await fetchFolders("/folders", "GET");
-    navigate("/");
+    const response = await patchFolder(`/folders/${id}`, "DELETE");
+
+    if (response) {
+      await fetchFolders("/folders", "GET");
+      navigate("/");
+      toast.success("Folder deleted successfully");
+    } else {
+      toast.error("Failed to delete folder");
+    }
   };
 
   const handleRename = async (id: string) => {
     if (!newFolderName.trim()) return;
-    await patchFolder(`/folders/${id}`, "PATCH", { name: newFolderName });
-    setRenamingFolderId(null); // Exit rename mode after updating
-    await fetchFolders("/folders", "GET");
+    const response = await patchFolder(`/folders/${id}`, "PATCH", {
+      name: newFolderName,
+    });
+
+    if (response) {
+      setRenamingFolderId(null);
+      await fetchFolders("/folders", "GET");
+      toast.success(response);
+    } else {
+      toast.error("Unable to Rename");
+    }
   };
 
   // Fetch All the folders on mount and whenever addFolder changes
   useEffect(() => {
+    if (addFolder) return;
     (async () => {
-      try {
-        await fetchFolders("/folders", "GET", {});
-      } catch (error) {
-        console.log(error);
+      const response = await fetchFolders("/folders", "GET", {});
+      if(!response){
+        toast.error(fetchFolderError?.error||fetchFolderError?.message)
       }
     })();
   }, [addFolder]);
 
   // Relocate to first folder by default
   useEffect(() => {
-    // If viewing trahed
-    if(istrashFolderList){
+    if (istrashFolderList) {
       setSelectedFolderName("Trash");
-      return;      
-    }else if(isFavoritesFolderList){
-      setSelectedFolderName("Favorites")
       return;
-    }else if(isArchivesFolderList){
-      setSelectedFolderName("Archives")
+    } else if (isFavoritesFolderList) {
+      setSelectedFolderName("Favorites");
+      return;
+    } else if (isArchivesFolderList) {
+      setSelectedFolderName("Archives");
       return;
     }
 
@@ -128,7 +151,7 @@ function Folders() {
               type="text"
               value={folderName}
               autoFocus
-              className="w-[166px] h-[22px] border border-white/40 p-1 font-semibold text-white text-[16px] leading-[20.11px] tracking-normal outline-none focus:border-white bg-white/5"
+              className="w-[166px] h-[22px] border border-white/40 p-1 font-semibold text-white text-[16px] leading-[20.11px] tracking-normal outline-none focus:border-none bg-transparent"
               onChange={(e) => setFolderName(e.target.value)}
               onKeyDown={handleEnter}
               onBlur={handleEnter}
@@ -150,7 +173,11 @@ function Folders() {
               setNewFolderName(folder.name);
             }}
           >
-            <NavLink key={folder.id} to={`/folders/${folder.id}`} className="w-[90%]">
+            <NavLink
+              key={folder.id}
+              to={`/folders/${folder.id}`}
+              className="w-[90%]"
+            >
               <div className="flex items-center gap-4 p-1">
                 <img
                   className={`w-6 h-6 ${

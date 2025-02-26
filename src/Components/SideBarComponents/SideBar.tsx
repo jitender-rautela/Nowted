@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import{More, Recents, Folders, useApiRequest, NoteResponseInterface, useFolders} from '../../index.tsx';
+import { toast } from "react-toastify";
 
 function SideBar() {
   const navigate = useNavigate();
@@ -11,7 +12,6 @@ function SideBar() {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const {
-    data: postNoteData,
     loading: postNoteLoading,
     error: postNoteError,
     callApi: postNote,
@@ -37,8 +37,10 @@ function SideBar() {
     });
 
     if (response?.id) {
+      toast.success("New note created");
       navigate(`/folders/${folderId}/notes/${response.id}`)
-      console.log("New note created");
+    }else{
+      toast.error(postNoteError?.error||postNoteError?.message);
     }
   };
 
@@ -52,10 +54,8 @@ function SideBar() {
     const delayDebounce = setTimeout(async() => {
       const response = await searchNote(`/notes?search=${searchQuery}&deleted=${false}`, "GET");
 
-      if(response){
-        console.log("Search request successful")
-      }else{
-        console.log("Search request failed")
+      if(!response){
+        toast.error(searchNoteError?.error || searchNoteError?.message)
       }
 
     }, 500);
