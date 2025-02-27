@@ -1,6 +1,6 @@
 const ActiveNoteSkelaton = () => {
   return (
-    <div className="flex flex-col gap-8 p-12 w-full h-[1024px]">
+    <div className="flex flex-col gap-8 p-12 w-full h-screen">
       {/* Skeleton Note Header */}
       <div className="flex justify-between w-[690px] h-[40px]">
         <div className="w-2/3 h-8 bg-white/5 animate-pulse rounded"></div>

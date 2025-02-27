@@ -258,7 +258,7 @@ function ActiveNote() {
   }
 
   return (
-    <div className="flex flex-col gap-8 p-12 w-full h-[1024px]  pr-8 pl-8">
+    <div className="flex flex-col gap-8 p-12 w-full h-screen  pr-8 pl-8">
       {/* Note Header */}
       {fetchNoteLoading ? (
         <ActiveNoteSkelaton />
