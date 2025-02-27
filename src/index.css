@@ -8,7 +8,7 @@
   .theme-text-primary { @apply text-white; }
   .theme-text-secondary { @apply text-white/60; }
   .theme-bg-primary { @apply bg-[#1C1C1C]; }
-  .theme-bg-secondary { @apply bg-[#312EB5]; }
+  .theme-bg-secondary { @apply bg-[#2f5716]; }
   .theme-bg-dark {@apply bg-[#181818]}
   .theme-bg-faded {@apply bg-white/5}
 
