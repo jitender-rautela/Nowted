@@ -404,7 +404,7 @@ function ActiveNote() {
 
           <div>
             <textarea
-              className="w-full h-[700px] theme-text-primary text-base leading-[28px] overflow-scroll hide-scrollbar bg-transparent outline-none resize-none text-justify"
+              className="w-full h-[550px] theme-text-primary text-base leading-[28px] overflow-scroll hide-scrollbar bg-transparent outline-none resize-none text-justify"
               value={noteContent}
               onChange={handleNoteContent}
             />
