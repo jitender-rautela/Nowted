@@ -2,6 +2,10 @@ import { useEffect, useState, useCallback } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import{More, Recents, Folders, useApiRequest, NoteResponseInterface, useFolders} from '../../index.tsx';
 import { toast } from "react-toastify";
+import logoIcon from "../../assets/logo.svg";
+import searchIcon from "../../assets/search.svg";
+import newNoteIcon from "../../assets/new.svg";
+
 
 function SideBar() {
   const navigate = useNavigate();
@@ -68,12 +72,12 @@ function SideBar() {
     <div className="side-bar flex flex-col w-[300px] h-[1024px] theme-bg-dark pt-[30px] pb-[30px] pr-[20px] pl-[20px] gap-[30px]">
       <div className="logo-search flex justify-between items-center h-[38px] w-full">
         <img
-          src="../src/assets/logo.svg"
+          src={logoIcon}
           alt="logo"
           className="h-full w-[101px]"
         />
         <img
-          src="../src/assets/search.svg"
+          src={searchIcon}
           alt="search"
           onClick={toggleSearch}
           className="w-[13.33px] h-[13.33px] cursor-pointer"
@@ -86,14 +90,14 @@ function SideBar() {
           className="new-note-field flex justify-center items-center w-full h-[40px] pl-5 pr-5 gap-2 rounded theme-bg-faded cursor-pointer hover:bg-white/10 transition"
           disabled={!folderId || postNoteLoading}
         >
-          <img src="../src/assets/new.svg" alt="New Note" className="w-5 h-5" />
+          <img src={newNoteIcon} alt="New Note" className="w-5 h-5" />
           <span className="theme-text-primary font-semibold text-base">New Note</span>
         </button>
       ) : (
         <div className="relative w-full">
           <div className="search-field flex items-center w-full h-[40px] gap-2 rounded theme-bg-faded pl-3">
             <img
-              src="../src/assets/search.svg"
+              src={searchIcon}
               alt="Search icon"
               className="w-5 h-5"
             />

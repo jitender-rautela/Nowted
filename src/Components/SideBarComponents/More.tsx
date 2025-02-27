@@ -1,4 +1,7 @@
 import { NavLink, useLocation } from "react-router-dom";
+import favoritesIcon from "../../assets/favorites.svg";
+import trashIcon from "../../assets/trash.svg";
+import archivedIcon from "../../assets/archived.svg";
 
 function More() {
   const location = useLocation();
@@ -16,11 +19,7 @@ function More() {
           ${isFavoritesFolderList ? "theme-bg-faded" : "hover:theme-bg-faded"}`}
         >
           <div className="file-item">
-            <img
-              src="../src/assets/favorites.svg"
-              alt="file img"
-              className="w-6 h-6"
-            />
+            <img src={favoritesIcon} alt="file img" className="w-6 h-6" />
             <span className="file-text">Favorites</span>
           </div>
         </div>
@@ -32,11 +31,7 @@ function More() {
           ${isTrashFolderList ? "theme-bg-faded" : "hover:theme-bg-faded"}`}
         >
           <div className="file-item">
-            <img
-              src="../src/assets/trash.svg"
-              alt="file img"
-              className="w-6 h-6"
-            />
+            <img src={trashIcon} alt="file img" className="w-6 h-6" />
             <span className="file-text">Trash</span>
           </div>
         </div>
@@ -48,11 +43,7 @@ function More() {
           ${isArchivesFolderList ? "theme-bg-faded" : "hover:theme-bg-faded"}`}
         >
           <div className="file-item">
-            <img
-              src="../src/assets/archived.svg"
-              alt="file img"
-              className="w-6 h-6"
-            />
+            <img src={archivedIcon} alt="file img" className="w-6 h-6" />
             <span className="file-text">Archived Notes</span>
           </div>
         </div>

@@ -11,6 +11,15 @@ import {
 } from "../../index.tsx";
 import { toast } from "react-toastify";
 import ActiveNoteSkelaton from "../SkeletonLoaders/ActiveNoteSkeleton.tsx";
+import noteOptionIcon from "../../assets/note-option.svg";
+import favoriteIcon from "../../assets/favorites.svg";
+import favoriteFillIcon from "../../assets/favorite-fill.svg";
+import archiveIcon from "../../assets/archived.svg";
+import archiveFillIcon from "../../assets/archived-fill.svg";
+import trashIcon from "../../assets/trash.svg";
+import calendarIcon from "../../assets/calender.svg";
+import folderIcon from "../../assets/folder-close.svg";
+
 
 function ActiveNote() {
   const navigate = useNavigate();
@@ -265,7 +274,7 @@ function ActiveNote() {
             <div className="relative">
               <img
                 className="w-8 h-8 cursor-pointer"
-                src="../src/assets/note-option.svg"
+                src={noteOptionIcon}
                 alt="Options"
                 onClick={handleNoteOption}
               />
@@ -280,8 +289,8 @@ function ActiveNote() {
                       <img
                         src={
                           noteAttributes.isFavorite
-                            ? "../src/assets/favorite-fill.svg"
-                            : "../src/assets/favorites.svg"
+                            ? favoriteFillIcon
+                            :favoriteIcon
                         }
                         alt="favorite_icon"
                       />
@@ -299,8 +308,8 @@ function ActiveNote() {
                       <img
                         src={
                           noteAttributes.isArchived
-                            ? "../src/assets/archived-fill.svg"
-                            : "../src/assets/archived.svg"
+                            ? archiveFillIcon
+                            : archiveIcon
                         }
                         alt="archived_icon"
                       />
@@ -317,7 +326,7 @@ function ActiveNote() {
                       className="flex gap-[15px] cursor-pointer"
                       onClick={handleDelete}
                     >
-                      <img src="../src/assets/trash.svg" alt="trash_icon" />
+                      <img src={trashIcon} alt="trash_icon" />
                       <span className="theme-text-primary text-[16px] hover:text-white/70">
                         Delete
                       </span>
@@ -332,7 +341,7 @@ function ActiveNote() {
           <div className="w-full flex flex-col gap-4">
             <div className="flex gap-6">
               <div className="flex gap-4 items-center">
-                <img src="../src/assets/calender.svg" alt="Calendar" />
+                <img src={calendarIcon} alt="Calendar" />
                 <span className="theme-text-secondary text-sm">Date</span>
               </div>
               {fetchNoteData?.note?.updatedAt && (
@@ -344,7 +353,7 @@ function ActiveNote() {
             <hr />
             <div className="flex gap-6 relative">
               <div className="flex gap-4 items-center">
-                <img src="../src/assets/folder-close.svg" alt="Folder" />
+                <img src={folderIcon} alt="Folder" />
                 <span className="theme-text-secondary text-sm">Folder</span>
               </div>
 
@@ -402,7 +411,7 @@ function ActiveNote() {
           </div>
         </>
       ) : (
-        <p className="text-white">Error loading note...</p>
+        <p className="theme-text-primary">Error loading note...</p>
       )}
     </div>
   );

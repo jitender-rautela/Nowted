@@ -5,12 +5,14 @@ import {
   RecentResponseInterface,
   NoteInterface,
   NavLink,
-  useParams,  
+  useParams,
 } from "../../index.tsx";
 import RecentsSkeleton from "../SkeletonLoaders/RecentsSkeleton.tsx";
+import fileIcon from "../../assets/file.svg";
+import fileFocusIcon from "../../assets/file-focus.svg";
 
 function Recents() {
-  const { noteId,} = useParams();
+  const { noteId } = useParams();
   const {
     data: recentNotesData,
     error: recentNotesError,
@@ -20,31 +22,32 @@ function Recents() {
 
   useEffect(() => {
     (async () => {
-        await fetchRecentNotes("/notes/recent", "GET");
-        console.log("Fetch complete.");     
+      await fetchRecentNotes("/notes/recent", "GET");
+      console.log("Fetch complete.");
     })();
-  }, [noteId]); 
+  }, [noteId]);
 
   return (
     <div className="sidebar-subcontainer h-[156px]">
       <span className="sidebar-heading">Recents</span>
       <div className="flex flex-col gap-1 w-full h-full">
         {/* Loading State */}
-        {recentNotesLoading && <RecentsSkeleton/>}
+        {recentNotesLoading && <RecentsSkeleton />}
 
         {/* Error State */}
         {recentNotesError && (
-          <p className="theme-text-primary">Error loading data. Please try again.</p>
+          <p className="theme-text-primary">
+            Error loading data. Please try again.
+          </p>
         )}
 
-       
         {!recentNotesLoading &&
           !recentNotesError &&
           (recentNotesData?.recentNotes?.length ? (
             recentNotesData.recentNotes.map((note: NoteInterface) => (
               <NavLink
                 key={note.id}
-                to={`/folders/${note.folderId}/notes/${note.id}`} 
+                to={`/folders/${note.folderId}/notes/${note.id}`}
               >
                 <div
                   className={`file-item rounded-md group ${
@@ -55,19 +58,21 @@ function Recents() {
                     className={`w-6 h-6 ${
                       noteId === note.id ? "hidden" : "group-hover:hidden"
                     }`}
-                    src="../src/assets/file.svg"
+                    src={fileIcon}
                     alt="file img"
                   />
                   <img
                     className={`w-6 h-6 ${
                       noteId === note.id ? "block" : "hidden group-hover:block"
                     }`}
-                    src="../src/assets/file-focus.svg"
+                    src={fileFocusIcon}
                     alt="file img"
                   />
                   <span
                     className={`file-text ${
-                      noteId === note.id ? "text-white" : "group-hover:text-white"
+                      noteId === note.id
+                        ? "text-white"
+                        : "group-hover:text-white"
                     }`}
                   >
                     {note.title}

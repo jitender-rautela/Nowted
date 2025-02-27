@@ -4,6 +4,7 @@ import useApiRequest from "../../hooks/useApiRequest";
 import { useEffect, useState } from "react";
 import { NoteIdResponseInterface } from "../../interface/Interface";
 import { toast } from "react-toastify";
+import documentIcon from "../../assets/document.svg"
 
 function RestoreNote() {
   const { noteId, folderId } = useParams();
@@ -36,7 +37,7 @@ function RestoreNote() {
 
   return (
     <div className="note-view-container">
-      <img src="../src/assets/document.svg" alt="document img" />
+      <img src={documentIcon} alt="document img" />
       <p className="note-view-h">Restore Note</p>
       <p className="note-view-p">
         Don't want to lose this note? It's not too late! Just click the
