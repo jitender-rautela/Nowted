@@ -3,6 +3,11 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import addFolderIcon from "../../assets/addfolder.svg";
+import folderIcon from "../../assets/folder.svg";
+import folderCloseIcon from "../../assets/folder-close.svg";
+import deleteIcon from "../../assets/delete.svg";
+
 import {
   useFolders,
   useApiRequest,
@@ -141,7 +146,7 @@ function Folders() {
       <div className="flex justify-between h-[20px]">
         <span className="sidebar-heading">Folders</span>
         <img
-          src="../src/assets/addfolder.svg"
+          src={addFolderIcon}
           alt="add_folder_img"
           className="cursor-pointer"
           onClick={handleAddFolder}
@@ -152,7 +157,7 @@ function Folders() {
         {addFolder && (
           <div className="file-item">
             <img
-              src="../src/assets/folder.svg"
+              src={folderCloseIcon}
               alt="file img"
               className="w-6 h-6"
             />
@@ -197,7 +202,7 @@ function Folders() {
                   className={`w-6 h-6 ${
                     folder.id === folderId ? "hidden" : "group-hover:hidden"
                   }`}
-                  src="../src/assets/folder-close.svg"
+                  src={folderCloseIcon}
                   alt="folder img"
                 />
                 <img
@@ -206,7 +211,7 @@ function Folders() {
                       ? "block"
                       : "hidden group-hover:block"
                   }`}
-                  src="../src/assets/folder.svg"
+                  src={folderIcon}
                   alt="folder img"
                 />
 
@@ -237,7 +242,7 @@ function Folders() {
             </NavLink>
 
             <img
-              src="../src/assets/delete.svg"
+              src={deleteIcon}
               alt="trash icon"
               className="cursor-pointer opacity-50 hover:opacity-100"
               onClick={(e) => {
