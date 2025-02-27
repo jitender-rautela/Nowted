@@ -69,7 +69,7 @@ function SideBar() {
 
 
   return (
-    <div className="side-bar flex flex-col w-[300px] h-[1024px] theme-bg-dark pt-[30px] pb-[30px] pr-[20px] pl-[20px] gap-[30px]">
+    <div className="side-bar flex flex-col w-[300px] h-screen theme-bg-dark pt-[30px] pb-[30px] pr-[20px] pl-[20px] gap-[20px] ">
       <div className="logo-search flex justify-between items-center h-[38px] w-full">
         <img
           src={logoIcon}

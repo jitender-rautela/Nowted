@@ -51,7 +51,7 @@
 
 
 .folder-list-container { 
-  @apply w-[350px] h-[1024px] theme-bg-primary flex flex-col gap-[30px] pt-[30px] pr-[20px] pl-[20px]; 
+  @apply w-[350px] h-screen theme-bg-primary flex flex-col gap-[30px] pt-[30px] pr-[20px] pl-[20px]; 
 }
 
 .folder-list-heading { 
@@ -76,7 +76,7 @@
 }
 
 .note-view-container { 
-  @apply w-full h-[1024px] flex flex-col justify-center items-center gap-[10px]; 
+  @apply w-full h-screen flex flex-col justify-center items-center gap-[10px]; 
 }
 
 .note-view-h { 
