@@ -94,8 +94,8 @@ function SideBar() {
           <span className="theme-text-primary font-semibold text-base">New Note</span>
         </button>
       ) : (
-        <div className="relative w-full">
-          <div className="search-field flex items-center w-full h-[40px] gap-2 rounded theme-bg-faded pl-3">
+        <div className="relative w-full h-[40px] ">
+          <div className="search-field flex items-center w-full gap-2 rounded theme-bg-faded pl-3 h-full">
             <img
               src={searchIcon}
               alt="Search icon"

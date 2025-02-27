@@ -23,7 +23,6 @@ function Recents() {
   useEffect(() => {
     (async () => {
       await fetchRecentNotes("/notes/recent", "GET");
-      console.log("Fetch complete.");
     })();
   }, [noteId]);
 
