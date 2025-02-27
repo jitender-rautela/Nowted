@@ -70,7 +70,7 @@ function FolderList() {
     //   setSelectedFolderName("Favorites");
     // } else if (isArchivesFolderList) {
     //   setSelectedFolderName("Archives");
-    // }       
+    // }
 
     setNotes([]);
     setPage(1);
@@ -85,7 +85,7 @@ function FolderList() {
     //   setSelectedFolderName("Archives");
     // }else if(notes.length > 0){
     //  if(folderId){
-        
+
     //   }
     // }
   }, [

@@ -44,7 +44,7 @@ function Folders() {
       | React.FocusEvent<HTMLInputElement>
   ) => {
     if ("key" in e && e.key !== "Enter") return;
-    
+
     if (folderName === "") {
       toast.error("Missing folder name");
       return;
@@ -118,8 +118,7 @@ function Folders() {
     } else if (isArchivesFolderList) {
       setSelectedFolderName("Archives");
       return;
-    }  
-  
+    }
 
     if (fetchFolderData?.folders && fetchFolderData.folders.length > 0) {
       if (!folderId) {
@@ -169,8 +168,12 @@ function Folders() {
             />
           </div>
         )}
-        {fetchFolderLoading && <p className="theme-text-primary">Loading....</p>}
-        {fetchFolderError && <p className="theme-text-primary">Error Loading data</p>}
+        {fetchFolderLoading && (
+          <p className="theme-text-primary">Loading....</p>
+        )}
+        {fetchFolderError && (
+          <p className="theme-text-primary">Error Loading data</p>
+        )}
 
         {fetchFolderData?.folders?.map((folder) => (
           <div
